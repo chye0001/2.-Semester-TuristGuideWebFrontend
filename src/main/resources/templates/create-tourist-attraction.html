@@ -27,8 +27,9 @@
         <option th:each="city : ${cities}" th:value="${city}" th:text="${city}">Cities</option>
     </select>
 
-    <div id="tags">
-        <input type="checkbox" th:field="*{tags}" th:each="tag : ${tags}" th:value="${tag}" th:text="${tag}" required>
+<!--    Man kan have alle th-tags i samme html-tag-->
+    <div id="tags" th:each="tag : ${tags}">
+        <input type="checkbox" th:field="*{tags}" th:value="${tag}" th:text="${tag}" required>
     </div>
 
 

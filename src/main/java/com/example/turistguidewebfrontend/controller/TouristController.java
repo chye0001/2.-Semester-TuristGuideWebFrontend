@@ -78,19 +78,7 @@ public class TouristController {
 
 
 
-
-
-
     //Old code
-    @GetMapping("/view/{name}")
-    public ResponseEntity<TouristAttraction> getTouristAttraction(@PathVariable String name){
-        TouristAttraction viewTouristAttraction = touristService.view(name);
-
-        if (viewTouristAttraction == null){
-            return new ResponseEntity<>(viewTouristAttraction, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(viewTouristAttraction, HttpStatus.OK);
-    }
 
 
 
