@@ -28,8 +28,6 @@ public class TouristController {
         return "admin";
     }
 
-    //New code
-
     @GetMapping("/{name}/tags")
     public String getTagsForAttraction(@PathVariable String name, Model model){
         List<String> turristAttractionTags = touristService.getAttractionTags(name);
@@ -63,6 +61,12 @@ public class TouristController {
     public String updateSetup(@PathVariable String name, Model model){
         TouristAttraction attractionToUpdate = touristService.read(name);
         model.addAttribute("touristAttractionToUpdate", attractionToUpdate);
+
+        List<String> citySelections = touristService.getCitySelections();
+        model.addAttribute("cities", citySelections);
+
+        List<String> tagsSelections = touristService.getTagSelections();
+        model.addAttribute("tags", tagsSelections);
 
         return "update-tourist-attraction";
     }

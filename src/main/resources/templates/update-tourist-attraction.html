@@ -3,10 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Update attraction</title>
+    <link rel="stylesheet" href="/mainStyle.css">
 </head>
 <body>
 
+<h1>Ændring af information</h1>
 
+<form action="/attractions/update" method="post" th:object="${touristAttractionToUpdate}">
+
+    <label for="name">Navn: </label>
+    <input id="name" type="text" th:field="*{name}" readonly>
+
+    <label for="description">Beskrivelse: </label>
+    <input id="description" type="text" th:field="*{description}">
+
+    <label for="city">By: </label>
+    <select id="city" th:field="*{city}" required>
+        <option value="">Vælg by</option>
+        <option th:each="city : ${cities}" th:value="${city}" th:text="${city}">Cities</option>
+    </select>
+
+    <div id="tags">
+        <input type="checkbox" th:field="*{tags}" th:each="tag : ${tags}" th:value="${tag}" th:text="${tag}">
+    </div>
+
+    <button type="submit">Opdater</button>
+</form>
+
+<a href="/attractions"> <button>Fortryd</button> </a>
 
 </body>
 </html>
