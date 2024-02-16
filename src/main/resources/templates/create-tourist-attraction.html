@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create attraction</title>
+</head>
+<body>
+
+<h1>Tilføj Tourist Attraktion</h1>
+
+<form action="/attractions/create" method="post" th:object="${touristAttraction}">
+
+<!--    Tjek om man virkelig kan sætte attributterne på disse 2 måder-->
+    <label for="name">Navn: </label>
+    <input id="name" type="text" th:field="*{name}" required>
+
+    <label for="beskrivelse">Beskrivelse: </label>
+    <input id="beskrivelse" type="text" th:field="*{description}" required>
+
+<!--    denne metode til at binde attribut værdi op i form virker ikke-->
+<!--    <label for="beskrivelse">Beskrivelse: </label>-->
+<!--    <input id="beskrivelse" type="text" th:text="${touristAttraction.description}" required>-->
+
+    <label for="by">By: </label>
+    <select id="by" th:field="*{city}" required>
+        <option value="">Vælg by</option>
+        <option th:each="city : ${cities}" th:value="${city}" th:text="${city}">Cities</option>
+    </select>
+
+    <div id="tags">
+        <input type="checkbox" th:field="*{tags}" th:each="tag : ${tags}" th:value="${tag}" th:text="${tag}" required>
+    </div>
+
+
+    <button type="submit">OK</button>
+
+</form>
+
+<a href="/attractions"> <button>Fortryd</button> </a>
+
+</body>
+</html>
