@@ -15,11 +15,11 @@ public class TouristService {
         this.touristRepository = touristRepository;
     }
 
-    public TouristAttraction view(String touristAttractionName){
-        TouristAttraction viewAttraction;
-        viewAttraction = touristRepository.view(touristAttractionName);
+    public TouristAttraction read(String touristAttractionName){
+        TouristAttraction readAttraction;
+        readAttraction = touristRepository.read(touristAttractionName);
 
-        return viewAttraction;
+        return readAttraction;
     }
 
     public List<TouristAttraction> viewAll(){

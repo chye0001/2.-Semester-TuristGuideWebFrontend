@@ -41,7 +41,7 @@ public class TouristController {
     }
 
     @GetMapping("/create")
-    public String create(Model model){
+    public String createSetup(Model model){
         model.addAttribute("touristAttraction", new TouristAttraction());
 
         List<String> citySelections = touristService.getCitySelections();
@@ -59,48 +59,25 @@ public class TouristController {
         return "redirect:/attractions";
     }
 
+    @GetMapping("/{name}/update")
+    public String updateSetup(@PathVariable String name, Model model){
+        TouristAttraction attractionToUpdate = touristService.read(name);
+        model.addAttribute("touristAttractionToUpdate", attractionToUpdate);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //Old code
-
-
-
-    @PutMapping("/update")
-    public ResponseEntity<TouristAttraction> update(@RequestBody TouristAttraction touristAttraction){
-        TouristAttraction updatedTouristAttraction = touristService.update(touristAttraction);
-
-        if (updatedTouristAttraction == null){
-            return new ResponseEntity<>(updatedTouristAttraction, HttpStatus.NOT_FOUND);
-
-        }else
-            return new ResponseEntity<>(touristAttraction, HttpStatus.OK);
+        return "update-tourist-attraction";
     }
 
-    @GetMapping("/delete/{name}")
-    public ResponseEntity<TouristAttraction> delete(@PathVariable String name){
-        TouristAttraction deletedTouristAttraction = touristService.delete(name);
+    @PostMapping("/update")
+    public String updateAttraction(@ModelAttribute TouristAttraction attraction){
+        touristService.update(attraction);
 
-        if(deletedTouristAttraction == null){
-            return new ResponseEntity<>(deletedTouristAttraction, HttpStatus.NOT_FOUND);
+        return "redirect:/attractions";
+    }
 
-        } else
-            return new ResponseEntity<>(deletedTouristAttraction, HttpStatus.OK);
+    @GetMapping("/{name}/delete")
+    public String deleteAttraction(@PathVariable("name") String touristAttraction){
+        touristService.delete(touristAttraction);
+
+        return "redirect:/attractions";
     }
 }

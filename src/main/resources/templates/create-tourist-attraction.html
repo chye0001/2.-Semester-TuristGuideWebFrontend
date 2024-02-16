@@ -10,16 +10,12 @@
 
 <form action="/attractions/create" method="post" th:object="${touristAttraction}">
 
-<!--    Tjek om man virkelig kan sætte attributterne på disse 2 måder-->
+<!--    kan man anvende, th:field="*{name}" og th:value="${touristAttraction.name}"-->
     <label for="name">Navn: </label>
     <input id="name" type="text" th:field="*{name}" required>
 
     <label for="beskrivelse">Beskrivelse: </label>
     <input id="beskrivelse" type="text" th:field="*{description}" required>
-
-<!--    denne metode til at binde attribut værdi op i form virker ikke-->
-<!--    <label for="beskrivelse">Beskrivelse: </label>-->
-<!--    <input id="beskrivelse" type="text" th:text="${touristAttraction.description}" required>-->
 
     <label for="by">By: </label>
     <select id="by" th:field="*{city}" required>
@@ -28,8 +24,9 @@
     </select>
 
 <!--    Man kan have alle th-tags i samme html-tag-->
-    <div id="tags" th:each="tag : ${tags}">
-        <input type="checkbox" th:field="*{tags}" th:value="${tag}" th:text="${tag}" required>
+<!--    spørg om man ikke kan tilføje "required" til tagget, uden at man er tvunget til vælge alle checkbox-->
+    <div id="tags">
+        <input type="checkbox" th:field="*{tags}" th:each="tag : ${tags}" th:value="${tag}" th:text="${tag}">
     </div>
 
 

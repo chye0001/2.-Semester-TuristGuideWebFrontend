@@ -22,7 +22,7 @@ public class TouristRepository {
         ));
     }
 
-    public TouristAttraction view(String touristAttractionName){
+    public TouristAttraction read(String touristAttractionName){
         TouristAttraction viewTouristAttraction;
 
         try {
