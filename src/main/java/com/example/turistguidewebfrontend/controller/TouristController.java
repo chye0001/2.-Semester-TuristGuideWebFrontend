@@ -26,6 +26,14 @@ public class TouristController {
         return "admin";
     }
 
+    @GetMapping("/all")
+    public String getAllTouristAttractionOnly(Model model){
+        List<TouristAttraction> allTouristAttractions = touristService.viewAll();
+        model.addAttribute("attractions", allTouristAttractions);
+
+        return "all-tourist-attractions";
+    }
+
     @GetMapping("/{name}/tags")
     public String getTagsForAttraction(@PathVariable String name, Model model){
         List<String> turristAttractionTags = touristService.getAttractionTags(name);
