@@ -8,13 +8,22 @@ public class TouristAttraction {
     private String description;
     private String city;
     private List<String> tags;
+    private double price;
+    private String currency;
 
     public TouristAttraction(){}
-    public TouristAttraction(String name, String description, String city, List<String> tags){
+    public TouristAttraction(String name,
+                             String description,
+                             String city,
+                             List<String> tags,
+                             double price,
+                             String currency){
         this.name = name;
         this.description = description;
         this.city = city;
         this.tags = tags;
+        this.price = price;
+        this.currency = currency;
     }
 
     public String getName() {
@@ -29,6 +38,12 @@ public class TouristAttraction {
     public List<String> getTags() {
         return tags;
     }
+    public double getPrice(){
+        return price;
+    }
+    public String getCurrency() {
+        return currency;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -41,6 +56,12 @@ public class TouristAttraction {
     }
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+    public void setPrice(double price){
+        this.price = price;
+    }
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }
 
