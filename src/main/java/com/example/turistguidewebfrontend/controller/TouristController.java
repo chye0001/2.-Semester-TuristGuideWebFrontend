@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Formatter;
 import java.util.List;
 
 @Controller
@@ -17,13 +18,13 @@ public class TouristController {
     private final TouristService touristService;
     private final CurrencyService currencyService;
 
-    public TouristController(TouristService touristService, CurrencyService currencyService){
+    public TouristController(TouristService touristService, CurrencyService currencyService) {
         this.touristService = touristService;
         this.currencyService = currencyService;
     }
 
     @GetMapping("")
-    public String getAllTouristAttraction(Model model){
+    public String getAllTouristAttraction(Model model) {
         List<TouristAttraction> allTouristAttractions = touristService.viewAll();
         model.addAttribute("attractions", allTouristAttractions);
 
@@ -35,21 +36,35 @@ public class TouristController {
         List<TouristAttraction> allTouristAttractions = touristService.viewAll();
         model.addAttribute("attractions", allTouristAttractions);
 
+//        for (TouristAttraction attraction : allTouristAttractions) {
+//           String formatedPrice = (new Formatter().format("%.2f", attraction.getPrice()).toString());
+//           attraction.setPrice(Double.parseDouble(formatedPrice));
+//        }
+
         List<String> currencyList = currencyService.getAllCurrencies();
         model.addAttribute("currencies", currencyList);
+        model.addAttribute("currency", "DKK");
+        model.addAttribute("conversionFactor", 1);
         return "all-tourist-attractions";
     }
 
-    @PostMapping("/currency-conversion")
-    public String convertCurrencies(@RequestParam String currency, Model model) throws IOException {
-        currencyService.getCurrencyRate(currency);
-        touristService.convertCurrencies(currency);
+    @GetMapping("/currency-conversion")
+    public String convertCurrencies(@RequestParam String currency, Model model) {
+        List<TouristAttraction> allTouristAttractions = touristService.viewAll();
+        model.addAttribute("attractions", allTouristAttractions);
 
-        return "redirect:/attractions/all";
+        List<String> currencyList = currencyService.getAllCurrencies();
+        model.addAttribute("currencies", currencyList);
+
+        double conversionFactor = currencyService.getConversionFactor(currency);
+        model.addAttribute("conversionFactor", conversionFactor);
+        model.addAttribute("currency", currency);
+
+        return "all-tourist-attractions";
     }
 
     @GetMapping("/{name}/tags/user")
-    public String getTagsForAttractionUser(@PathVariable String name, Model model){
+    public String getTagsForAttractionUser(@PathVariable String name, Model model) {
         List<String> turristAttractionTags = touristService.getAttractionTags(name);
 
         model.addAttribute("attraction", name);
@@ -59,7 +74,7 @@ public class TouristController {
     }
 
     @GetMapping("/{name}/tags")
-    public String getTagsForAttraction(@PathVariable String name, Model model){
+    public String getTagsForAttraction(@PathVariable String name, Model model) {
         List<String> turristAttractionTags = touristService.getAttractionTags(name);
 
         model.addAttribute("attraction", name);
@@ -69,7 +84,7 @@ public class TouristController {
     }
 
     @GetMapping("/create")
-    public String createSetup(Model model){
+    public String createSetup(Model model) {
         model.addAttribute("touristAttraction", new TouristAttraction());
 
         List<String> citySelections = touristService.getCitySelections();
@@ -82,13 +97,13 @@ public class TouristController {
     }
 
     @PostMapping("/create")
-    public String createAttraction(@ModelAttribute TouristAttraction attractionToAdd){
+    public String createAttraction(@ModelAttribute TouristAttraction attractionToAdd) {
         touristService.create(attractionToAdd);
         return "redirect:/attractions";
     }
 
     @GetMapping("/{name}/update")
-    public String updateSetup(@PathVariable String name, Model model){
+    public String updateSetup(@PathVariable String name, Model model) {
         TouristAttraction attractionToUpdate = touristService.read(name);
         model.addAttribute("touristAttractionToUpdate", attractionToUpdate);
 
@@ -102,14 +117,14 @@ public class TouristController {
     }
 
     @PostMapping("/update")
-    public String updateAttraction(@ModelAttribute TouristAttraction attraction){
+    public String updateAttraction(@ModelAttribute TouristAttraction attraction) {
         touristService.update(attraction);
 
         return "redirect:/attractions";
     }
 
     @GetMapping("/{name}/delete")
-    public String deleteAttraction(@PathVariable("name") String touristAttraction){
+    public String deleteAttraction(@PathVariable("name") String touristAttraction) {
         touristService.delete(touristAttraction);
 
         return "redirect:/attractions";

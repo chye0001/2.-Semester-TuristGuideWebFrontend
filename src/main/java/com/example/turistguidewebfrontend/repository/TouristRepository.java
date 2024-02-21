@@ -96,9 +96,4 @@ public class TouristRepository {
 
         return tags;
     }
-    public void convertCurrencies(String currency) {
-        for (TouristAttraction attraction:database) {
-            attraction.setCurrency(currency);
-        }
-    }
 }

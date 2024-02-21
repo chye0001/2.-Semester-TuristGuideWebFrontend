@@ -15,13 +15,6 @@ import java.util.List;
 @Service
 public class CurrencyService {
 
-    private final TouristRepository repository;
-    double dkkRate = getRates().getDKK();
-    double usdRate = getRates().getUSD();
-    double eurRate = getRates().getEUR();
-    public CurrencyService(TouristRepository repository) throws IOException {
-        this.repository = repository;
-    }
 
     public CurrencyRates getRates() throws IOException {
         //Se evt. mere her: https://forexvalutaomregner.dk/pages/api);
@@ -35,7 +28,6 @@ public class CurrencyService {
         CurrencyRates currencyRates = new Gson().fromJson(inputFromUrl, CurrencyRates.class);
         //Close stream
         inputFromUrl.close();
-        System.out.println(currencyRates);
         return currencyRates;
     }
 
@@ -45,67 +37,26 @@ public class CurrencyService {
         return rates;
     }
 
-    public void getCurrencyRate(String currency) {
-        List<TouristAttraction> attractionList = repository.viewAll();
+    public double getConversionFactor(String currency) {
 
-        switch (currency) {
-            case "DKK" -> convertCurrencyToDKK(attractionList);
-            case "USD" -> convertCurrencyToUSD(attractionList);
-            case "EUR" -> convertCurrencyToEUR(attractionList);
+        try {
+            switch (currency) {
+                case "DKK" -> {
+                    return 1;
+                }
+                case "USD" -> {
+                    double USDDKK = getRates().getUSD() / getRates().getDKK();
+                    return USDDKK;
+                }
+                case "EUR" -> {
+                    double EURDKK = getRates().getEUR() / getRates().getDKK();
+                    return EURDKK;
+                }
+            }
+        }catch (IOException IOE){
+            IOE.printStackTrace();
         }
-    }
 
-    private void convertCurrencyToDKK(List<TouristAttraction> attractionList) {
-        double DKKUSD = dkkRate / usdRate;
-        double DKKEUR = dkkRate / eurRate;
-
-        for (TouristAttraction attraction : attractionList) {
-            String previousCurrency = attraction.getCurrency();
-            double price = attraction.getPrice();
-
-            if (previousCurrency.equalsIgnoreCase("USD")) {
-                attraction.setPrice(price * DKKUSD);
-            }
-
-            if (previousCurrency.equalsIgnoreCase("EUR")) {
-                attraction.setPrice(price * DKKEUR);
-            }
-        }
-    }
-
-    private void convertCurrencyToUSD(List<TouristAttraction> attractionList){
-        double USDDKK = usdRate / dkkRate;
-        double USDEUR = usdRate / eurRate;
-
-        for (TouristAttraction attraction:attractionList) {
-            String previousCurrency = attraction.getCurrency();
-            double price = attraction.getPrice();
-
-            if (previousCurrency.equalsIgnoreCase("DKK")){
-                attraction.setPrice(price * USDDKK);
-            }
-
-            if (previousCurrency.equalsIgnoreCase("EUR")){
-                attraction.setPrice(price * USDEUR);
-            }
-        }
-    }
-
-    private void convertCurrencyToEUR(List<TouristAttraction> attractionList){
-        double EURDKK = eurRate / dkkRate;
-        double EURUSD = eurRate / usdRate;
-
-        for (TouristAttraction attraction:attractionList) {
-            String previousCurrency = attraction.getCurrency();
-            double price = attraction.getPrice();
-
-            if (previousCurrency.equalsIgnoreCase("DKK")){
-                attraction.setPrice(price * EURDKK);
-            }
-
-            if (previousCurrency.equalsIgnoreCase("USD")){
-                attraction.setPrice(price * EURUSD);
-            }
-        }
+        return 1; //redundant bliver aldrig ramt
     }
 }

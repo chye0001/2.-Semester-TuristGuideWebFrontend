@@ -1,6 +1,5 @@
 package com.example.turistguidewebfrontend.model;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,11 +8,7 @@ public class CurrencyRates {
     private Rate rates;
     private Date lastupdate;
 
-    private List<String> currencyList = List.of(
-            "DKK",
-            "EUR",
-            "USD"
-    );
+    private final List<String> currencyList = List.of("DKK", "EUR", "USD");
 
     public CurrencyRates(String table, Rate rates, Date lastupdate) {
         this.table = table;

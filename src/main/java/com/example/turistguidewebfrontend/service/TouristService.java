@@ -49,8 +49,4 @@ public class TouristService {
     public List<String> getAttractionTags(String name) {
         return touristRepository.getAttractionTags(name);
     }
-
-    public void convertCurrencies(String currency) {
-        touristRepository.convertCurrencies(currency);
-    }
 }
