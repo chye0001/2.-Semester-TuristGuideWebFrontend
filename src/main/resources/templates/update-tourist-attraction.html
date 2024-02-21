@@ -23,6 +23,12 @@
         <option th:each="city : ${cities}" th:value="${city}" th:text="${city}">Cities</option>
     </select>
 
+    <label for="price">Pris: </label>
+    <input id="price" type="number" th:field="*{price}">
+
+    <label for="currency">Valuta: </label>
+    <input id="currency" type="text" th:field="*{currency}" readonly>
+
     <div id="tags">
         <input type="checkbox" th:field="*{tags}" th:each="tag : ${tags}" th:value="${tag}" th:text="${tag}">
     </div>

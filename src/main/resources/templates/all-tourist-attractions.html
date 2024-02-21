@@ -37,7 +37,7 @@
         <tr th:each="attraction : ${attractions}">
             <td th:text="${attraction.name}"></td>
             <td th:text="${attraction.description}"></td>
-            <td th:text="${price} * ${conversionFactor}"></td>
+            <td th:text="${attraction.price} * ${conversionFactor}"></td>
             <td th:text="${currency}"></td>
             <td> <a th:href="@{/attractions/{name}/tags/user (name=${attraction.name})}"> <button>Tags</button> </a> </td>
         </tr>
