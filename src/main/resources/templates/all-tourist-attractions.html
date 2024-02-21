@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tourist Attractions</title>
+    <link rel="stylesheet" href="/mainStyle.css">
+</head>
+<body>
+
+<h1>Turist attraktioner:</h1>
+
+<h4>Omregn valuta</h4>
+
+<form action="/attractions/currency-conversion" method="post">
+    <label for="currency">Valuta: </label>
+    <select id="currency" name="currency">
+        <option value="">Vælg valuta</option>
+        <option th:each="currency : ${currencies}" th:value="${currency}" th:text="${currency}"></option>
+    </select>
+
+    <button type="submit">Omregn</button>
+</form>
+
+<br>
+
+<table>
+    <thead>
+        <tr>
+            <th>Navn</th>
+            <th>Beskrivelse</th>
+            <th>Pris</th>
+            <th>Valuta</th>
+        </tr>
+    </thead>
+<!--    * ${currencyRate} th:text="${currency}"-->
+<!--    <td th:if="${currency==null}">DKK</td>-->
+<!--    <td th:unless="${currency==null} th:text=${currency}"></td>    hvis currency ikke er null vil jeg gerne have currency fra submit til at visses her.-->
+    <tbody>
+        <tr th:each="attraction : ${attractions}">
+            <td th:text="${attraction.name}"></td>
+            <td th:text="${attraction.description}"></td>
+            <td th:text="${attraction.price}"></td>
+            <td th:text="${attraction.currency}"></td>
+            <td> <a th:href="@{/attractions/{name}/tags/user (name=${attraction.name})}"> <button>Tags</button> </a> </td>
+        </tr>
+    </tbody>
+</table>
+
+<a href="/index.html"> <button>Tilbage</button> </a>
+
+</body>
+</html>

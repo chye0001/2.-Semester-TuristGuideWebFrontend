@@ -1,11 +1,13 @@
 package com.example.turistguidewebfrontend.controller;
 
 import com.example.turistguidewebfrontend.model.TouristAttraction;
+import com.example.turistguidewebfrontend.service.CurrencyService;
 import com.example.turistguidewebfrontend.service.TouristService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -13,9 +15,11 @@ import java.util.List;
 public class TouristController {
 
     private final TouristService touristService;
+    private final CurrencyService currencyService;
 
-    public TouristController(TouristService touristService){
+    public TouristController(TouristService touristService, CurrencyService currencyService){
         this.touristService = touristService;
+        this.currencyService = currencyService;
     }
 
     @GetMapping("")
@@ -27,11 +31,31 @@ public class TouristController {
     }
 
     @GetMapping("/all")
-    public String getAllTouristAttractionOnly(Model model){
+    public String getAllTouristAttractionOnly(Model model) throws IOException {
         List<TouristAttraction> allTouristAttractions = touristService.viewAll();
         model.addAttribute("attractions", allTouristAttractions);
 
+        List<String> currencyList = currencyService.getAllCurrencies();
+        model.addAttribute("currencies", currencyList);
         return "all-tourist-attractions";
+    }
+
+    @PostMapping("/currency-conversion")
+    public String convertCurrencies(@RequestParam String currency, Model model) throws IOException {
+        currencyService.getCurrencyRate(currency);
+        touristService.convertCurrencies(currency);
+
+        return "redirect:/attractions/all";
+    }
+
+    @GetMapping("/{name}/tags/user")
+    public String getTagsForAttractionUser(@PathVariable String name, Model model){
+        List<String> turristAttractionTags = touristService.getAttractionTags(name);
+
+        model.addAttribute("attraction", name);
+        model.addAttribute("tags", turristAttractionTags);
+
+        return "tags-user";
     }
 
     @GetMapping("/{name}/tags")
@@ -41,7 +65,7 @@ public class TouristController {
         model.addAttribute("attraction", name);
         model.addAttribute("tags", turristAttractionTags);
 
-        return "tags";
+        return "tags-admin";
     }
 
     @GetMapping("/create")
