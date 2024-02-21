@@ -16,14 +16,13 @@ public class TouristAttraction {
                              String description,
                              String city,
                              List<String> tags,
-                             double price,
-                             String currency){
+                             double price){
         this.name = name;
         this.description = description;
         this.city = city;
         this.tags = tags;
         this.price = price;
-        this.currency = currency;
+        this.currency = "DKK";
     }
 
     public String getName() {
