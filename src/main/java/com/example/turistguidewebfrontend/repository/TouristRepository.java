@@ -15,10 +15,10 @@ public class TouristRepository {
 
     public TouristRepository(){
         this.database = new ArrayList<>(List.of(
-                new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum")),
-                new TouristAttraction("Odense Zoo", "Europas bedste zoo", "Odense", List.of("Børnevenlig")),
-                new TouristAttraction("Dyrehaven", "Naturpark med skovområder", "Kongens Lyngby", List.of("Natur", "Gratis")),
-                new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "København", List.of("Børnevenlig"))
+                new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99.95, "DKK"),
+                new TouristAttraction("Odense Zoo", "Europas bedste zoo", "Odense", List.of("Børnevenlig"), 25.95, "DKK"),
+                new TouristAttraction("Dyrehaven", "Naturpark med skovområder", "Kongens Lyngby", List.of("Natur", "Gratis"), 0.00, "DKK"),
+                new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "København", List.of("Børnevenlig"), 249.95, "DKK")
         ));
     }
 
@@ -96,5 +96,9 @@ public class TouristRepository {
 
         return tags;
     }
+    public void convertCurrencies(String currency) {
+        for (TouristAttraction attraction:database) {
+            attraction.setCurrency(currency);
+        }
+    }
 }
-
