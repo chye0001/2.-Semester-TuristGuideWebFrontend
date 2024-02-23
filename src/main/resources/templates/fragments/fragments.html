@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fragments</title>
+</head>
+<body>
+
+<div th:fragment="navigationBar">
+    <nav>
+        <a href="/static/index.html"> <button>Hjem</button> </a>
+        <a href="/attractions/all"> <button>Alle attraktioner</button> </a>
+        <a href="/attractions"> <button>Admin side</button> </a>
+    </nav>
+</div>
+
+</body>
+</html>
