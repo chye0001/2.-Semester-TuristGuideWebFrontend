@@ -9,9 +9,11 @@ public class TouristAttraction {
     private String city;
     private List<String> tags;
     private double price;
-    private String currency;
+    private final String currency;
 
-    public TouristAttraction(){}
+    public TouristAttraction(){
+        this.currency = "DKK";
+    }
     public TouristAttraction(String name,
                              String description,
                              String city,
