@@ -47,20 +47,5 @@ public class TouristAttraction {
     public void setName(String name) {
         this.name = name;
     }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    public void setCity(String city) {
-        this.city = city;
-    }
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-    public void setPrice(double price){
-        this.price = price;
-    }
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
 }
 
