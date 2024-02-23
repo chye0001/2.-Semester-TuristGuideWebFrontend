@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Formatter;
 import java.util.List;
 
 @Controller
@@ -57,6 +56,7 @@ public class TouristController {
         model.addAttribute("currencies", currencyList);
 
         double conversionFactor = currencyService.getConversionFactor(currency);
+
         model.addAttribute("conversionFactor", conversionFactor);
         model.addAttribute("currency", currency);
 
