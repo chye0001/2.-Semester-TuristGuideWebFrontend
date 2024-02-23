@@ -7,6 +7,8 @@
 </head>
 <body>
 
+<div th:replace="/fragments/fragments.html :: navigationBar"></div>
+
 <h1>Ændring af information</h1>
 
 <form action="/attractions/update" method="post" th:object="${touristAttractionToUpdate}">

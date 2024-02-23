@@ -7,7 +7,10 @@
 </head>
 <body>
 
+<div th:replace="/fragments/fragments :: navigationBar">Navigation bar</div>
+
 <h1>Turist attraktioner:</h1>
+
 <table>
     <thead>
         <tr>
@@ -35,6 +38,8 @@
 
 <a href="attractions/create"> <button>Tilføj attraktion</button> </a>
 <a href="/index.html"> <button>Tilbage</button> </a>
+
+<div th:replace="/fragments/fragments.html :: footer">footer</div>
 
 </body>
 </html>

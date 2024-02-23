@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
@@ -10,9 +10,15 @@
 <h1>Startside</h1>
 
 <nav>
-    <a href="/attractions/all"> <button>Alle attraktioner</button></a>
-    <a href="/attractions"> <button>Admin side</button> </a>
+    <div class="container">
+        <a href="/index.html"> <button>Hjem</button> </a>
+        <a href="/attractions/all"> <button>Alle attraktioner</button> </a>
+        <a href="/attractions"> <button>Admin side</button> </a>
+    </div>
 </nav>
+
+<div th:replace="/fragments/fragments :: navigationBar"></div>
+<div th:replace="/fragments/fragments.html :: footer"></div>
 
 </body>
 </html>

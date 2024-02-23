@@ -3,27 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Fragments</title>
+    <link rel="stylesheet" href="/mainStyle.css">
 </head>
 <body>
 
 <div th:fragment="navigationBar">
     <nav>
-        <a href="/static/index.html"> <button>Hjem</button> </a>
-        <a href="/attractions/all"> <button>Alle attraktioner</button> </a>
-        <a href="/attractions"> <button>Admin side</button> </a>
+        <div class="container">
+            <a href="/index.html"> <button>Hjem</button> </a>
+            <a href="/attractions/all"> <button>Alle attraktioner</button> </a>
+            <a href="/attractions"> <button>Admin side</button> </a>
+        </div>
     </nav>
 </div>
 
 <div th:fragment="footer">
     <footer>
-        Kontakt os<br>
-        Email: info@turistguiden.com
-        Telefon: +45 1234 5678<br>
-        Følg os på følgende sociale medier:
-        <a href="https://www.facebook.com/">Facebook</a> |
-        <a href="https://www.instagram.com/">Instagram</a> |
-        <a href="https://twitter.com">Twitter</a> <br>
-        © 2023 Turistguiden. Alle rettigheder forbeholdes.
+        <div class="footer">
+            Kontakt os<br>
+            Email: info@turistguiden.com
+            Telefon: +45 1234 5678<br>
+            Følg os på følgende sociale medier:
+            <a href="https://www.facebook.com/">Facebook</a> |
+            <a href="https://www.instagram.com/">Instagram</a> |
+            <a href="https://twitter.com">Twitter</a> <br>
+            © 2023 Turistguiden. Alle rettigheder forbeholdes.
+        </div>
     </footer>
 </div>
 
