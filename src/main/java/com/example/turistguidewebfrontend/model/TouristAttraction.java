@@ -11,7 +11,9 @@ public class TouristAttraction {
     private double price;
     private String currency;
 
-    public TouristAttraction(){}
+    public TouristAttraction(){
+        this.currency="DKK";
+    }
     public TouristAttraction(String name,
                              String description,
                              String city,
