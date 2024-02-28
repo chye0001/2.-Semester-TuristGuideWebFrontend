@@ -1,6 +1,7 @@
 package com.example.turistguidewebfrontend.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class TouristAttraction {
 
@@ -63,6 +64,14 @@ public class TouristAttraction {
     }
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TouristAttraction that)) return false;
+//        if(name == null && that.getName() == null) return true;
+        return Double.compare(price, that.price) == 0 && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(city, that.city) && Objects.equals(tags, that.tags) && Objects.equals(currency, that.currency);
     }
 }
 
