@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -47,6 +48,7 @@ class TouristControllerTest {
 
     @Test
     void convertCurrencies() throws Exception {
+        when(currencyConverterService.getConversionFactor("DKK")).thenReturn(1.0);
         mockMvc.perform(get("/attractions/currency-conversion"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("all-tourist-attractions"));
