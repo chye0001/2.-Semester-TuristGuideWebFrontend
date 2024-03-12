@@ -9,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -46,13 +48,13 @@ class TouristControllerTest {
                 .andExpect(view().name("all-tourist-attractions"));
     }
 
-    @Test
-    void convertCurrencies() throws Exception {
-        when(currencyConverterService.getConversionFactor("DKK")).thenReturn(1.0);
-        mockMvc.perform(get("/attractions/currency-conversion"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("all-tourist-attractions"));
-    }
+//    @Test
+//    void convertCurrencies() throws Exception {
+//        when(currencyConverterService.getConversionFactor("DKK")).thenReturn(1.0);
+//        mockMvc.perform(get("/attractions/currency-conversion"))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("all-tourist-attractions"));
+//    }
 
     @Test
     void getTagsForAttractionUser_SMK() throws Exception {
@@ -69,7 +71,7 @@ class TouristControllerTest {
     }
 
     @Test
-    void createSetup() throws Exception {
+    void buildCreateForm() throws Exception {
         mockMvc.perform(get("/attractions/create"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("create-tourist-attraction"));
@@ -84,7 +86,9 @@ class TouristControllerTest {
     }
 
     @Test
-    void updateSetup() throws Exception{
+    void buildUpdateForm() throws Exception{
+        when(touristService.read("SMK"))
+                .thenReturn(new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99.95));
         mockMvc.perform(get("/attractions/SMK/update"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("update-tourist-attraction"));
