@@ -65,7 +65,7 @@ public class TouristController {
 
     @GetMapping("/{name}/tags/user")
     public String getTagsForAttractionUser(@PathVariable String name, Model model) {
-        List<String> turristAttractionTags = touristService.getAttractionTags(name);
+        List<String> turristAttractionTags = touristService.getAttractionTagsByName(name);
 
         model.addAttribute("attraction", name);
         model.addAttribute("tags", turristAttractionTags);
@@ -74,8 +74,8 @@ public class TouristController {
     }
 
     @GetMapping("/{name}/tags")
-    public String getTagsForAttraction(@PathVariable String name, Model model) {
-        List<String> turristAttractionTags = touristService.getAttractionTags(name);
+    public String getTagsForAttractionAdmin(@PathVariable String name, Model model) {
+        List<String> turristAttractionTags = touristService.getAttractionTagsByName(name);
 
         model.addAttribute("attraction", name);
         model.addAttribute("tags", turristAttractionTags);
@@ -84,7 +84,7 @@ public class TouristController {
     }
 
     @GetMapping("/create")
-    public String createSetup(Model model) {
+    public String buildCreateForm(Model model) {
         model.addAttribute("touristAttraction", new TouristAttraction());
 
         List<String> citySelections = touristService.getCitySelections();
@@ -103,7 +103,7 @@ public class TouristController {
     }
 
     @GetMapping("/{name}/update")
-    public String updateSetup(@PathVariable String name, Model model) {
+    public String buildUpdateForm(@PathVariable String name, Model model) {
         TouristAttraction attractionToUpdate = touristService.read(name);
         model.addAttribute("touristAttractionToUpdate", attractionToUpdate);
 
