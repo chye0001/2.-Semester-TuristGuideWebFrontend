@@ -57,7 +57,7 @@ public class TouristAttraction {
     public List<String> getTags() {
         return tags;
     }
-    public double getPrice(){
+    public int getPrice(){
         return price;
     }
     public String getCurrencyCode() {
