@@ -88,7 +88,7 @@ class TouristControllerTest {
     @Test
     void buildUpdateForm() throws Exception{
         when(touristService.read("SMK"))
-                .thenReturn(new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99.95));
+                .thenReturn(new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99));
         mockMvc.perform(get("/attractions/SMK/update"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("update-tourist-attraction"));
