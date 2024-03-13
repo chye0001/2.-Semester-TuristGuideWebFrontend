@@ -15,10 +15,10 @@ public class TouristRepository {
 
     public TouristRepository(){
         this.database = new ArrayList<>(List.of(
-                new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99.95),
-                new TouristAttraction("Odense Zoo", "Europas bedste zoo", "Odense", List.of("Børnevenlig"), 25.95),
-                new TouristAttraction("Dyrehaven", "Naturpark med skovområder", "Kongens Lyngby", List.of("Natur", "Gratis"), 0.00),
-                new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "København", List.of("Børnevenlig"), 249.95)));
+                new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99),
+                new TouristAttraction("Odense Zoo", "Europas bedste zoo", "Odense", List.of("Børnevenlig"), 25),
+                new TouristAttraction("Dyrehaven", "Naturpark med skovområder", "Kongens Lyngby", List.of("Natur", "Gratis"), 0),
+                new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "København", List.of("Børnevenlig"), 249)));
     }
 
     public TouristAttraction read(String touristAttractionName){
