@@ -23,7 +23,7 @@
             <td th:text="${attraction.name}"></td>
             <td th:text="${attraction.description}"></td>
             <td th:text="${attraction.price}"></td>
-            <td th:text="${attraction.currency}"></td>
+            <td th:text="${attraction.currencyCode}"></td>
             <td> <a th:href="@{attractions/{name}/update (name=${attraction.name})}"> <button>Opdater</button> </a> </td>
             <td> <a th:href="@{attractions/{name}/tags (name=${attraction.name})}"> <button>Tags</button> </a> </td>
             <td> <a th:href="@{attractions/{name}/delete (name=${attraction.name})}"> <button>Slet</button> </a> </td>
