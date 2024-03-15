@@ -47,12 +47,15 @@ public class TouristRepositoryJDBC {
         return attractionList;
     }
 
-    public TouristAttraction read(String touristAttractionName) {
+    public TouristAttraction getAttractionOnName(String touristAttractionName) {
         TouristAttraction requestedAttraction = null;
 
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             ResultSet attractionResultset = executeGetAttractionOnNameQuery(connection, touristAttractionName);
-            ResultSet tagResultSet = executeGetTagsOnAttractionQuery(connection, attractionResultset);
+            ResultSet tagResultSet = null;
+            if (attractionResultset.next()) {
+                tagResultSet = executeGetTagsOnAttractionQuery(connection, attractionResultset);
+            }
 
             requestedAttraction = recreateAttractionObjectFromDB(attractionResultset, tagResultSet);
 
@@ -81,34 +84,27 @@ public class TouristRepositoryJDBC {
         }
     }
 
-    //
-//    public TouristAttraction update(TouristAttraction touristAttraction){
-//        TouristAttraction updatedTouristAttraction = null;
-//        return updatedTouristAttraction;
-//    }
-//
+    public TouristAttraction update(TouristAttraction touristAttraction){
+        TouristAttraction updatedTouristAttraction = null;
+
+        try(Connection connection = DriverManager.getConnection(url, username, password)) {
+           ResultSet attractionResulSet = executeGetAttractionOnNameQuery(connection, touristAttraction.getName());
+            //Løsning 1 løse dette på enten ved at lave et tjek og finde der hvor der er ændringer
+            //Løsning 2 override det hele.
+
+        }catch (SQLException sqlException){
+            System.out.println("Noget gik galt");
+            sqlException.printStackTrace();
+        }
+
+        return updatedTouristAttraction;
+    }
 
     public void deleteAttraction(String name){
         try (Connection connection = DriverManager.getConnection(url, username, password)){
 
-            ResultSet attractionResultSet = executeGetAttractionOnNameQuery(connection, name);
-
-            String deleteAttractionTagRelation = "DELETE FROM tourist_attraction_tag WHERE attractionID = ?";
-            PreparedStatement attractionTagRelationToDelete = connection.prepareStatement(deleteAttractionTagRelation);
-            if (attractionResultSet.next()) {
-                attractionTagRelationToDelete.setInt(1, attractionResultSet.getInt("ID"));
-            }
-            int affectedRowsFromAttractionTagRelation = attractionTagRelationToDelete.executeUpdate();
-
-            int affectedRowsFromTouristAttractionTable = 0;
-            if (affectedRowsFromAttractionTagRelation > 0) {
-                String deleteAttractionOnName = "DELETE FROM tourist_attraction WHERE name = ?";
-                PreparedStatement attractionToDelete = connection.prepareStatement(deleteAttractionOnName);
-                attractionToDelete.setString(1, name);
-                affectedRowsFromTouristAttractionTable = attractionToDelete.executeUpdate();
-            } else {
-                throw new Error("The Tourist Attraction-Tag relation was not deleted");
-            }
+            int affectedRowsFromAttractionTagRelation = deleteAttractionTagRelation(connection, name);
+            int affectedRowsFromTouristAttractionTable = deleteAttractionFromDatabase(connection, affectedRowsFromAttractionTagRelation, name);
 
             if (affectedRowsFromTouristAttractionTable < 0 || affectedRowsFromTouristAttractionTable == 0){
                 throw new Error("The Tourist Attraction was not deleted in tourist_attraction table");
@@ -239,7 +235,7 @@ public class TouristRepositoryJDBC {
     private ResultSet executeGetAttractionOnNameQuery(Connection connection, String touristAttractionName) throws SQLException {
         String getAttractionByName =
                 "SELECT tourist_attraction.ID,\n" +
-                        "\t   tourist_attraction.name as Attraction, \n" +
+                        "\t   tourist_attraction.name, \n" +
                         "\t   tourist_attraction.description, \n" +
                         "       city.name AS city, \n" +
                         "       tourist_attraction.price, \n" +
@@ -313,6 +309,29 @@ public class TouristRepositoryJDBC {
                 }
             }
         }
+    }
 
+    private int deleteAttractionTagRelation(Connection connection, String name) throws SQLException {
+        ResultSet attractionResultSet = executeGetAttractionOnNameQuery(connection, name);
+
+        String deleteAttractionTagRelation = "DELETE FROM tourist_attraction_tag WHERE attractionID = ?";
+        PreparedStatement attractionTagRelationToDelete = connection.prepareStatement(deleteAttractionTagRelation);
+        if (attractionResultSet.next()) {
+            attractionTagRelationToDelete.setInt(1, attractionResultSet.getInt("ID"));
+        }
+
+        return attractionTagRelationToDelete.executeUpdate();
+    }
+
+    private int deleteAttractionFromDatabase(Connection connection, int affectedRowsFromAttractionTagRelation, String name) throws SQLException {
+        if (affectedRowsFromAttractionTagRelation > 0) {
+            String deleteAttractionOnName = "DELETE FROM tourist_attraction WHERE name = ?";
+            PreparedStatement attractionToDelete = connection.prepareStatement(deleteAttractionOnName);
+            attractionToDelete.setString(1, name);
+            return attractionToDelete.executeUpdate();
+
+        } else {
+            throw new Error("The Tourist Attraction-Tag relation was not deleted");
+        }
     }
 }
