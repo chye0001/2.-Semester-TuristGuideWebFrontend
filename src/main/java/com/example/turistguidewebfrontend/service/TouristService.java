@@ -35,7 +35,7 @@ public class TouristService {
     }
 
     public TouristAttraction update(TouristAttraction touristAttraction){
-        return repositoryJDBC.update(touristAttraction);
+        return repositoryJDBC.updateAttraction(touristAttraction);
     }
 
     public void delete(String name){
