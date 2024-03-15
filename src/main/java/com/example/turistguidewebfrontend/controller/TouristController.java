@@ -98,32 +98,32 @@ public class TouristController {
         touristService.create(attractionToAdd);
         return "redirect:/attractions";
     }
-//
-//    @GetMapping("/{name}/update")
-//    public String buildUpdateForm(@PathVariable String name, Model model) {
-//        TouristAttraction attractionToUpdate = touristService.read(name);
-//        model.addAttribute("touristAttractionToUpdate", attractionToUpdate);
-//
-//        List<String> citySelections = touristService.getCitySelections();
-//        model.addAttribute("cities", citySelections);
-//
-//        List<String> tagsSelections = touristService.getTagSelections();
-//        model.addAttribute("tags", tagsSelections);
-//
-//        return "update-tourist-attraction";
-//    }
-//
-//    @PostMapping("/update")
-//    public String updateAttraction(@ModelAttribute TouristAttraction attraction) {
-//        touristService.update(attraction);
-//
-//        return "redirect:/attractions";
-//    }
-//
-//    @GetMapping("/{name}/delete")
-//    public String deleteAttraction(@PathVariable("name") String touristAttraction) {
-//        touristService.delete(touristAttraction);
-//
-//        return "redirect:/attractions";
-//    }
+
+    @GetMapping("/{name}/update")
+    public String buildUpdateForm(@PathVariable String name, Model model) {
+        TouristAttraction attractionToUpdate = touristService.getAttractionOnName(name);
+        model.addAttribute("touristAttractionToUpdate", attractionToUpdate);
+
+        List<String> citySelections = touristService.getCitySelections();
+        model.addAttribute("cities", citySelections);
+
+        List<String> tagsSelections = touristService.getTagSelections();
+        model.addAttribute("tags", tagsSelections);
+
+        return "update-tourist-attraction";
+    }
+
+    @PostMapping("/update")
+    public String updateAttraction(@ModelAttribute TouristAttraction attraction) {
+        touristService.update(attraction);
+
+        return "redirect:/attractions";
+    }
+
+    @GetMapping("/{name}/delete")
+    public String deleteAttraction(@PathVariable("name") String touristAttraction) {
+        touristService.delete(touristAttraction);
+
+        return "redirect:/attractions";
+    }
 }
