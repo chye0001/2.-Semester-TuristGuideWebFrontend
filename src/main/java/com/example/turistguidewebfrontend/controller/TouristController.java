@@ -24,15 +24,14 @@ public class TouristController {
 
     @GetMapping("")
     public String getAllTouristAttraction(Model model) {
-        List<TouristAttraction> allTouristAttractions = touristService.viewAll();
+        List<TouristAttraction> allTouristAttractions = touristService.getAllAttractions();
         model.addAttribute("attractions", allTouristAttractions);
-
         return "admin";
     }
 
     @GetMapping("/all")
     public String getAllTouristAttractionOnly(Model model) throws IOException {
-        List<TouristAttraction> allTouristAttractions = touristService.viewAll();
+        List<TouristAttraction> allTouristAttractions = touristService.getAllAttractions();
         model.addAttribute("attractions", allTouristAttractions);
 
 //        for (TouristAttraction attraction : allTouristAttractions) {
@@ -49,7 +48,7 @@ public class TouristController {
 
     @GetMapping("/currency-conversion")
     public String convertCurrencies(@RequestParam String currency, Model model) {
-        List<TouristAttraction> allTouristAttractions = touristService.viewAll();
+        List<TouristAttraction> allTouristAttractions = touristService.getAllAttractions();
         model.addAttribute("attractions", allTouristAttractions);
 
         List<String> currencyList = currencyService.getAllCurrencies();
@@ -69,7 +68,6 @@ public class TouristController {
 
         model.addAttribute("attraction", name);
         model.addAttribute("tags", turristAttractionTags);
-
         return "tags-user";
     }
 
@@ -92,7 +90,6 @@ public class TouristController {
 
         List<String> tagsSelections = touristService.getTagSelections();
         model.addAttribute("tags", tagsSelections);
-
         return "create-tourist-attraction";
     }
 
@@ -101,32 +98,32 @@ public class TouristController {
         touristService.create(attractionToAdd);
         return "redirect:/attractions";
     }
-
-    @GetMapping("/{name}/update")
-    public String buildUpdateForm(@PathVariable String name, Model model) {
-        TouristAttraction attractionToUpdate = touristService.read(name);
-        model.addAttribute("touristAttractionToUpdate", attractionToUpdate);
-
-        List<String> citySelections = touristService.getCitySelections();
-        model.addAttribute("cities", citySelections);
-
-        List<String> tagsSelections = touristService.getTagSelections();
-        model.addAttribute("tags", tagsSelections);
-
-        return "update-tourist-attraction";
-    }
-
-    @PostMapping("/update")
-    public String updateAttraction(@ModelAttribute TouristAttraction attraction) {
-        touristService.update(attraction);
-
-        return "redirect:/attractions";
-    }
-
-    @GetMapping("/{name}/delete")
-    public String deleteAttraction(@PathVariable("name") String touristAttraction) {
-        touristService.delete(touristAttraction);
-
-        return "redirect:/attractions";
-    }
+//
+//    @GetMapping("/{name}/update")
+//    public String buildUpdateForm(@PathVariable String name, Model model) {
+//        TouristAttraction attractionToUpdate = touristService.read(name);
+//        model.addAttribute("touristAttractionToUpdate", attractionToUpdate);
+//
+//        List<String> citySelections = touristService.getCitySelections();
+//        model.addAttribute("cities", citySelections);
+//
+//        List<String> tagsSelections = touristService.getTagSelections();
+//        model.addAttribute("tags", tagsSelections);
+//
+//        return "update-tourist-attraction";
+//    }
+//
+//    @PostMapping("/update")
+//    public String updateAttraction(@ModelAttribute TouristAttraction attraction) {
+//        touristService.update(attraction);
+//
+//        return "redirect:/attractions";
+//    }
+//
+//    @GetMapping("/{name}/delete")
+//    public String deleteAttraction(@PathVariable("name") String touristAttraction) {
+//        touristService.delete(touristAttraction);
+//
+//        return "redirect:/attractions";
+//    }
 }
