@@ -84,10 +84,8 @@ public class TouristRepositoryJDBC {
         }
     }
 
-    public TouristAttraction updateAttraction(TouristAttraction touristAttraction){
-        TouristAttraction updatedTouristAttraction = null;
-
-        try(Connection connection = DriverManager.getConnection(url, username, password)) {
+    public void updateAttraction(TouristAttraction touristAttraction) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
             //Løsning 1 løse dette på enten ved at lave et tjek og finde der hvor der er ændringer
 
             //Løsning 2 override det hele.
@@ -102,24 +100,22 @@ public class TouristRepositoryJDBC {
             List<Integer> tagIDList = createTagIDListOnAttraction(connection, touristAttraction);
             updateAttractionTagRelation(connection, affectedRowsFromAttractionTagRelation, attractionToUpdateID, tagIDList);
 
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
             sqlException.printStackTrace();
         }
-
-        return updatedTouristAttraction;
     }
 
-    public void deleteAttraction(String name){
-        try (Connection connection = DriverManager.getConnection(url, username, password)){
+    public void deleteAttraction(String name) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
             int affectedRowsFromAttractionTagRelation = deleteAttractionTagRelation(connection, name);
             int affectedRowsFromTouristAttractionTable = deleteAttractionFromDatabase(connection, affectedRowsFromAttractionTagRelation, name);
 
-            if (affectedRowsFromTouristAttractionTable < 0 || affectedRowsFromTouristAttractionTable == 0){
+            if (affectedRowsFromTouristAttractionTable < 0 || affectedRowsFromTouristAttractionTable == 0) {
                 throw new Error("The Tourist Attraction was not deleted in tourist_attraction table");
             }
 
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
             sqlException.printStackTrace();
         }
@@ -300,8 +296,8 @@ public class TouristRepositoryJDBC {
 
     private void createAttractionTagRelation(Connection connection, int affectedRows, PreparedStatement pstmtAttractionToInsert, List<Integer> tagIDList) throws SQLException {
         if (affectedRows > 0) {
-            try(ResultSet primaryKeyResultSet = pstmtAttractionToInsert.getGeneratedKeys()) {
-                if (primaryKeyResultSet.next()){
+            try (ResultSet primaryKeyResultSet = pstmtAttractionToInsert.getGeneratedKeys()) {
+                if (primaryKeyResultSet.next()) {
                     int createdAttractionID = primaryKeyResultSet.getInt(1);
 
                     String buildAttractionTagRelation = "INSERT INTO tourist_attraction_tag (attractionID, tagID) VALUES (?, ?)";

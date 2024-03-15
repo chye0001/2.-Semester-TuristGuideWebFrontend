@@ -15,38 +15,39 @@ public class TouristService {
 //    }
 
     private final TouristRepositoryJDBC repositoryJDBC;
+
     public TouristService(TouristRepositoryJDBC repositoryJDBC) {
         this.repositoryJDBC = repositoryJDBC;
     }
 
-    public TouristAttraction getAttractionOnName(String touristAttractionName){
+    public TouristAttraction getAttractionOnName(String touristAttractionName) {
         TouristAttraction readAttraction;
         readAttraction = repositoryJDBC.getAttractionOnName(touristAttractionName);
 
         return readAttraction;
     }
 
-    public List<TouristAttraction> getAllAttractions(){
+    public List<TouristAttraction> getAllAttractions() {
         return repositoryJDBC.getAllAttractions();
     }
 
-    public void create(TouristAttraction touristAttraction){
+    public void create(TouristAttraction touristAttraction) {
         repositoryJDBC.createAttraction(touristAttraction);
     }
 
-    public TouristAttraction update(TouristAttraction touristAttraction){
-        return repositoryJDBC.updateAttraction(touristAttraction);
+    public void update(TouristAttraction touristAttraction) {
+        repositoryJDBC.updateAttraction(touristAttraction);
     }
 
-    public void delete(String name){
+    public void delete(String name) {
         repositoryJDBC.deleteAttraction(name);
     }
 
-    public List<String> getCitySelections(){
+    public List<String> getCitySelections() {
         return repositoryJDBC.getCitySelections();
     }
 
-    public List<String> getTagSelections(){
+    public List<String> getTagSelections() {
         return repositoryJDBC.getTagSelections();
     }
 
