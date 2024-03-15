@@ -19,9 +19,9 @@ public class TouristService {
         this.repositoryJDBC = repositoryJDBC;
     }
 
-    public TouristAttraction read(String touristAttractionName){
+    public TouristAttraction getAttractionOnName(String touristAttractionName){
         TouristAttraction readAttraction;
-        readAttraction = repositoryJDBC.read(touristAttractionName);
+        readAttraction = repositoryJDBC.getAttractionOnName(touristAttractionName);
 
         return readAttraction;
     }
@@ -31,16 +31,16 @@ public class TouristService {
     }
 
     public void create(TouristAttraction touristAttraction){
-        repositoryJDBC.create(touristAttraction);
+        repositoryJDBC.createAttraction(touristAttraction);
     }
 
-//    public TouristAttraction update(TouristAttraction touristAttraction){
-//        return repositoryJDBC.update(touristAttraction);
-//    }
-//
-//    public TouristAttraction delete(String name){
-//        return repositoryJDBC.delete(name);
-//    }
+    public TouristAttraction update(TouristAttraction touristAttraction){
+        return repositoryJDBC.update(touristAttraction);
+    }
+
+    public void delete(String name){
+        repositoryJDBC.deleteAttraction(name);
+    }
 
     public List<String> getCitySelections(){
         return repositoryJDBC.getCitySelections();
