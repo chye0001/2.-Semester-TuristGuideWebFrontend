@@ -88,6 +88,40 @@ public class TouristRepositoryJDBC {
 //    }
 //
 
+    public void deleteAttraction(String name){
+        try (Connection connection = DriverManager.getConnection(url, username, password)){
+
+            ResultSet attractionResultSet = executeGetAttractionOnNameQuery(connection, name);
+
+            String deleteAttractionTagRelation = "DELETE FROM tourist_attraction_tag WHERE attractionID = ?";
+            PreparedStatement attractionTagRelationToDelete = connection.prepareStatement(deleteAttractionTagRelation);
+            if (attractionResultSet.next()) {
+                attractionTagRelationToDelete.setInt(1, attractionResultSet.getInt("ID"));
+            }
+            int affectedRowsFromAttractionTagRelation = attractionTagRelationToDelete.executeUpdate();
+
+            int affectedRowsFromTouristAttractionTable = 0;
+            if (affectedRowsFromAttractionTagRelation > 0) {
+                String deleteAttractionOnName = "DELETE FROM tourist_attraction WHERE name = ?";
+                PreparedStatement attractionToDelete = connection.prepareStatement(deleteAttractionOnName);
+                attractionToDelete.setString(1, name);
+                affectedRowsFromTouristAttractionTable = attractionToDelete.executeUpdate();
+            } else {
+                throw new Error("The Tourist Attraction-Tag relation was not deleted");
+            }
+
+            if (affectedRowsFromTouristAttractionTable < 0 || affectedRowsFromTouristAttractionTable == 0){
+                throw new Error("The Tourist Attraction was not deleted in tourist_attraction table");
+            }
+
+
+        }catch (SQLException sqlException){
+            System.out.println("Noget gik galt");
+            sqlException.printStackTrace();
+        }
+
+
+    }
 
     public List<String> getCitySelections() {
         List<String> citySelections = new ArrayList<>();
