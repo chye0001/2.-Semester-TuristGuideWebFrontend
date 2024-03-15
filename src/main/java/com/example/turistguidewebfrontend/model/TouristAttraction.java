@@ -84,6 +84,18 @@ public class TouristAttraction {
     }
 
     @Override
+    public String toString() {
+        return "TouristAttraction{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", city='" + city + '\'' +
+                ", tags=" + tags +
+                ", price=" + price +
+                ", currencyCode='" + currencyCode + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof TouristAttraction that)) return false;
