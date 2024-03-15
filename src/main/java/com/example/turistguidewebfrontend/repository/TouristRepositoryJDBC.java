@@ -84,13 +84,23 @@ public class TouristRepositoryJDBC {
         }
     }
 
-    public TouristAttraction update(TouristAttraction touristAttraction){
+    public TouristAttraction updateAttraction(TouristAttraction touristAttraction){
         TouristAttraction updatedTouristAttraction = null;
 
         try(Connection connection = DriverManager.getConnection(url, username, password)) {
-           ResultSet attractionResulSet = executeGetAttractionOnNameQuery(connection, touristAttraction.getName());
             //Løsning 1 løse dette på enten ved at lave et tjek og finde der hvor der er ændringer
+
             //Løsning 2 override det hele.
+            ResultSet attractionResultSet = executeGetAttractionOnNameQuery(connection, touristAttraction.getName());
+            attractionResultSet.next();
+            int attractionToUpdateID = attractionResultSet.getInt("ID");
+
+            int cityID = matchCityNameToCityID(connection, touristAttraction);
+            int affectedRowsFromUpdate = updateAttractionInDatabase(connection, touristAttraction, attractionToUpdateID, cityID);
+            int affectedRowsFromAttractionTagRelation = resetAttractionTagRelation(connection, attractionToUpdateID, affectedRowsFromUpdate);
+
+            List<Integer> tagIDList = createTagIDListOnAttraction(connection, touristAttraction);
+            updateAttractionTagRelation(connection, affectedRowsFromAttractionTagRelation, attractionToUpdateID, tagIDList);
 
         }catch (SQLException sqlException){
             System.out.println("Noget gik galt");
@@ -102,7 +112,6 @@ public class TouristRepositoryJDBC {
 
     public void deleteAttraction(String name){
         try (Connection connection = DriverManager.getConnection(url, username, password)){
-
             int affectedRowsFromAttractionTagRelation = deleteAttractionTagRelation(connection, name);
             int affectedRowsFromTouristAttractionTable = deleteAttractionFromDatabase(connection, affectedRowsFromAttractionTagRelation, name);
 
@@ -110,13 +119,10 @@ public class TouristRepositoryJDBC {
                 throw new Error("The Tourist Attraction was not deleted in tourist_attraction table");
             }
 
-
         }catch (SQLException sqlException){
             System.out.println("Noget gik galt");
             sqlException.printStackTrace();
         }
-
-
     }
 
     public List<String> getCitySelections() {
@@ -332,6 +338,40 @@ public class TouristRepositoryJDBC {
 
         } else {
             throw new Error("The Tourist Attraction-Tag relation was not deleted");
+        }
+    }
+
+    private int updateAttractionInDatabase(Connection connection, TouristAttraction touristAttraction, int attractionToUpdateID, int cityID) throws SQLException {
+        String updateAttractionInDatabase = "UPDATE tourist_attraction SET description = ?, cityID = ?, price = ? WHERE ID = ?";
+        PreparedStatement attractionToUpdate = connection.prepareStatement(updateAttractionInDatabase);
+        attractionToUpdate.setString(1, touristAttraction.getDescription());
+        attractionToUpdate.setInt(2, cityID);
+        attractionToUpdate.setInt(3, touristAttraction.getPrice());
+        attractionToUpdate.setInt(4, attractionToUpdateID);
+        return attractionToUpdate.executeUpdate();
+    }
+
+    private int resetAttractionTagRelation(Connection connection, int attractionToUpdateID, int affectedRowsFromUpdate) throws SQLException {
+        int affectedRows = 0;
+        if (affectedRowsFromUpdate > 0) {
+            String resetAttractionTagRelation = "DELETE FROM tourist_attraction_tag WHERE attractionID = ?";
+            PreparedStatement attractionTagRelationToReset = connection.prepareStatement(resetAttractionTagRelation);
+            attractionTagRelationToReset.setInt(1, attractionToUpdateID);
+            affectedRows = attractionTagRelationToReset.executeUpdate();
+        }
+        return affectedRows;
+    }
+
+    private void updateAttractionTagRelation(Connection connection, int affectedRowsFromAttractionTagRelation, int attractionToUpdateID, List<Integer> tagIDList) throws SQLException {
+        if (affectedRowsFromAttractionTagRelation > 0) {
+            String updateAttractionTagRelation = "INSERT INTO tourist_attraction_tag (attractionID, tagID) VALUES (?, ?)";
+            PreparedStatement attractionTagRelationToUpdate = connection.prepareStatement(updateAttractionTagRelation);
+
+            for (int tagID : tagIDList) {
+                attractionTagRelationToUpdate.setInt(1, attractionToUpdateID);
+                attractionTagRelationToUpdate.setInt(2, tagID);
+                attractionTagRelationToUpdate.executeUpdate();
+            }
         }
     }
 }
