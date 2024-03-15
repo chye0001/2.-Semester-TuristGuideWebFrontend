@@ -30,34 +30,33 @@ public class TouristRepositoryJDBC {
     public List<TouristAttraction> getAllAttractions() {
         List<TouristAttraction> attractionList = new ArrayList<>();
 
-        try(Connection connection = DriverManager.getConnection(url, username, password)){
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
             ResultSet attractionsResultSet = executeGetAllAttractionsQuery(connection);
 
-            while (attractionsResultSet.next()){
+            while (attractionsResultSet.next()) {
                 ResultSet tagResultset = executeGetTagsOnAttractionQuery(connection, attractionsResultSet);
                 TouristAttraction touristAttraction = recreateAttractionObjectFromDB(attractionsResultSet, tagResultset);
                 attractionList.add(touristAttraction);
             }
             return attractionList;
 
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
             sqlException.printStackTrace();
         }
         return attractionList;
     }
 
-    public TouristAttraction read(String touristAttractionName){
+    public TouristAttraction read(String touristAttractionName) {
         TouristAttraction requestedAttraction = null;
 
-        try(Connection connection = DriverManager.getConnection(url, username, password)){
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
             ResultSet attractionResultset = executeGetAttractionOnNameQuery(connection, touristAttractionName);
             ResultSet tagResultSet = executeGetTagsOnAttractionQuery(connection, attractionResultset);
 
             requestedAttraction = recreateAttractionObjectFromDB(attractionResultset, tagResultSet);
-            return requestedAttraction;
 
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println("Den valgte attraction findes ikke");
             sqlException.printStackTrace();
 
@@ -65,116 +64,65 @@ public class TouristRepositoryJDBC {
         return requestedAttraction;
     }
 
-    public void create(TouristAttraction touristAttraction){
-        try(Connection connection = DriverManager.getConnection(url, username, password)){
-            String findCityIdForAttraction = "SELECT * FROM city";
-            PreparedStatement pstmtTableCity = connection.prepareStatement(findCityIdForAttraction);
-            ResultSet matchCityNameToCityID = pstmtTableCity.executeQuery();
+    public void createAttraction(TouristAttraction touristAttraction) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
 
-            int cityID = 0;
-            while (matchCityNameToCityID.next()){
-                if (matchCityNameToCityID.getString("name").equalsIgnoreCase(touristAttraction.getCity())){
-                    cityID = matchCityNameToCityID.getInt("ID");
-                }
-            }
+            int cityID = matchCityNameToCityID(connection, touristAttraction);
+            List<Integer> tagIDList = createTagIDListOnAttraction(connection, touristAttraction);
 
+            PreparedStatement pstmtAttractionToInsert = insertAttractionIntoDB(connection, touristAttraction, cityID);
+            int affectedRows = pstmtAttractionToInsert.executeUpdate();
 
+            createAttractionTagRelation(connection, affectedRows, pstmtAttractionToInsert, tagIDList);
 
-
-
-            String findTagIDForAttraction = "SELECT * FROM tag";
-            PreparedStatement pstmtTableTag = connection.prepareStatement(findTagIDForAttraction);
-            ResultSet matchTagsToTagIDs = pstmtTableTag.executeQuery();
-
-            List<Integer> tagIDList = new ArrayList<>();
-            while (matchTagsToTagIDs.next()){
-                for (String tag:touristAttraction.getTags()) {
-                    if (matchTagsToTagIDs.getString("tag").equalsIgnoreCase(tag)){
-                        tagIDList.add(matchTagsToTagIDs.getInt("ID"));
-                    }
-                }
-            }
-
-            String insertAttraction = "INSERT INTO tourist_attraction (name, description, cityID, price, currencyCode) VALUES(?, ?, ?, ?, ?)";
-            PreparedStatement pstmtTableAttraction = connection.prepareStatement(insertAttraction, Statement.RETURN_GENERATED_KEYS);
-            pstmtTableAttraction.setString(1, touristAttraction.getName());
-            pstmtTableAttraction.setString(2, touristAttraction.getDescription());
-            pstmtTableAttraction.setInt(3, cityID);
-            pstmtTableAttraction.setInt(4,touristAttraction.getPrice());
-            pstmtTableAttraction.setString(5, touristAttraction.getCurrencyCode());
-
-            int affectedRows = pstmtTableAttraction.executeUpdate();
-
-            if (affectedRows > 0){
-                try(ResultSet primaryKeyResultSet = pstmtTableAttraction.getGeneratedKeys()){
-                    if (primaryKeyResultSet.next()){
-                        int createdAttractionID = primaryKeyResultSet.getInt(1);
-
-                        String buildAttractionTagRelation = "INSERT INTO tourist_attraction_tag (attractionID, tagID) VALUES (?, ?)";
-                        PreparedStatement pstmtAttractionTagrelation = connection.prepareStatement(buildAttractionTagRelation);
-                        for (int tagID:tagIDList) {
-                            pstmtAttractionTagrelation.setInt(1, createdAttractionID);
-                            pstmtAttractionTagrelation.setInt(2, tagID);
-                            pstmtAttractionTagrelation.executeUpdate();
-                        }
-
-                    }
-                }
-            }
-
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
             sqlException.printStackTrace();
         }
     }
 
-//
+    //
 //    public TouristAttraction update(TouristAttraction touristAttraction){
 //        TouristAttraction updatedTouristAttraction = null;
 //        return updatedTouristAttraction;
 //    }
 //
-//    public TouristAttraction delete(String name){
-//        TouristAttraction touristAttractionToDelete = null;
-//
-//
-//        return touristAttractionToDelete;
-//    }
-//
-    public List<String> getCitySelections(){
+
+
+    public List<String> getCitySelections() {
         List<String> citySelections = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(url, username, password)){
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
             String getCities = "SELECT name FROM city;";
             PreparedStatement pstmtGetCities = connection.prepareStatement(getCities);
             ResultSet cityResultSet = pstmtGetCities.executeQuery();
 
-            while (cityResultSet.next()){
+            while (cityResultSet.next()) {
                 citySelections.add(cityResultSet.getString("name"));
             }
             return citySelections;
 
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
             sqlException.printStackTrace();
         }
         return citySelections;
     }
 
-    public List<String> getTagSelections(){
+    public List<String> getTagSelections() {
         List<String> tagSelections = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(url, username, password)){
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
             String getTags = "SELECT tag FROM tag";
             PreparedStatement pstmtGetTags = connection.prepareStatement(getTags);
             ResultSet tagResultSet = pstmtGetTags.executeQuery();
 
-            while (tagResultSet.next()){
+            while (tagResultSet.next()) {
                 tagSelections.add(tagResultSet.getString("tag"));
             }
             return tagSelections;
 
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
             sqlException.printStackTrace();
         }
@@ -184,7 +132,7 @@ public class TouristRepositoryJDBC {
     public List<String> getTagsOnAttraction(String attractionName) {
         List<String> tags = new ArrayList<>();
 
-        try(Connection connection = DriverManager.getConnection(url, username, password)) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
             ResultSet requestedAttractionResultSet = executeGetAttractionOnNameQuery(connection, attractionName);
             if (requestedAttractionResultSet.next()) {
                 ResultSet tagResultSet = executeGetTagsOnAttractionQuery(connection, requestedAttractionResultSet);
@@ -192,14 +140,14 @@ public class TouristRepositoryJDBC {
             }
 
             return tags;
-        }catch (SQLException sqlException) {
+        } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
             sqlException.printStackTrace();
         }
         return tags;
     }
 
-    private ResultSet executeGetAllAttractionsQuery(Connection connection) throws SQLException{
+    private ResultSet executeGetAllAttractionsQuery(Connection connection) throws SQLException {
         String getAttractions =
                 "SELECT tourist_attraction.ID,\n" +
                         "\t     tourist_attraction.name, \n" +
@@ -271,5 +219,66 @@ public class TouristRepositoryJDBC {
         PreparedStatement pstmtGetAttractionOnName = connection.prepareStatement(getAttractionByName);
         pstmtGetAttractionOnName.setString(1, touristAttractionName);
         return pstmtGetAttractionOnName.executeQuery();
+    }
+
+    private int matchCityNameToCityID(Connection connection, TouristAttraction touristAttraction) throws SQLException {
+        String findCityIdForAttraction = "SELECT * FROM city";
+        PreparedStatement pstmtTableCity = connection.prepareStatement(findCityIdForAttraction);
+        ResultSet cityNameResultSet = pstmtTableCity.executeQuery();
+
+        int cityID = 0;
+        while (cityNameResultSet.next()) {
+            if (cityNameResultSet.getString("name").equalsIgnoreCase(touristAttraction.getCity())) {
+                cityID = cityNameResultSet.getInt("ID");
+            }
+        }
+        return cityID;
+    }
+
+    private List<Integer> createTagIDListOnAttraction(Connection connection, TouristAttraction touristAttraction) throws SQLException {
+        String findTagIDForAttraction = "SELECT * FROM tag";
+        PreparedStatement pstmtTableTag = connection.prepareStatement(findTagIDForAttraction);
+        ResultSet matchTagsToTagIDs = pstmtTableTag.executeQuery();
+
+        List<Integer> tagIDList = new ArrayList<>();
+        while (matchTagsToTagIDs.next()) {
+            for (String tag : touristAttraction.getTags()) {
+                if (matchTagsToTagIDs.getString("tag").equalsIgnoreCase(tag)) {
+                    tagIDList.add(matchTagsToTagIDs.getInt("ID"));
+                }
+            }
+        }
+        return tagIDList;
+    }
+
+    private PreparedStatement insertAttractionIntoDB(Connection connection, TouristAttraction touristAttraction, int cityID) throws SQLException {
+        String insertAttraction = "INSERT INTO tourist_attraction (name, description, cityID, price, currencyCode) VALUES(?, ?, ?, ?, ?)";
+        PreparedStatement pstmtAttractionToInsert = connection.prepareStatement(insertAttraction, Statement.RETURN_GENERATED_KEYS);
+        pstmtAttractionToInsert.setString(1, touristAttraction.getName());
+        pstmtAttractionToInsert.setString(2, touristAttraction.getDescription());
+        pstmtAttractionToInsert.setInt(3, cityID);
+        pstmtAttractionToInsert.setInt(4, touristAttraction.getPrice());
+        pstmtAttractionToInsert.setString(5, touristAttraction.getCurrencyCode());
+        return pstmtAttractionToInsert;
+    }
+
+    private void createAttractionTagRelation(Connection connection, int affectedRows, PreparedStatement pstmtAttractionToInsert, List<Integer> tagIDList) throws SQLException {
+        if (affectedRows > 0) {
+            try(ResultSet primaryKeyResultSet = pstmtAttractionToInsert.getGeneratedKeys()) {
+                if (primaryKeyResultSet.next()){
+                    int createdAttractionID = primaryKeyResultSet.getInt(1);
+
+                    String buildAttractionTagRelation = "INSERT INTO tourist_attraction_tag (attractionID, tagID) VALUES (?, ?)";
+                    PreparedStatement pstmtAttractionTagrelation = connection.prepareStatement(buildAttractionTagRelation);
+                    for (int tagID : tagIDList) {
+                        pstmtAttractionTagrelation.setInt(1, createdAttractionID);
+                        pstmtAttractionTagrelation.setInt(2, tagID);
+                        pstmtAttractionTagrelation.executeUpdate();
+                    }
+
+                }
+            }
+        }
+
     }
 }
