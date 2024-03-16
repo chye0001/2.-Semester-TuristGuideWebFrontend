@@ -95,10 +95,11 @@ public class TouristRepositoryJDBC {
 
             int cityID = matchCityNameToCityID(connection, touristAttraction);
             int affectedRowsFromUpdate = updateAttractionInDatabase(connection, touristAttraction, attractionToUpdateID, cityID);
-            int affectedRowsFromAttractionTagRelation = resetAttractionTagRelation(connection, attractionToUpdateID, affectedRowsFromUpdate);
+            resetAttractionTagRelation(connection, attractionToUpdateID, affectedRowsFromUpdate);
 
             List<Integer> tagIDList = createTagIDListOnAttraction(connection, touristAttraction);
-            updateAttractionTagRelation(connection, affectedRowsFromAttractionTagRelation, attractionToUpdateID, tagIDList);
+            updateAttractionTagRelation(connection, attractionToUpdateID, tagIDList);
+
 
         } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
@@ -268,19 +269,27 @@ public class TouristRepositoryJDBC {
     }
 
     private List<Integer> createTagIDListOnAttraction(Connection connection, TouristAttraction touristAttraction) throws SQLException {
-        String findTagIDForAttraction = "SELECT * FROM tag";
-        PreparedStatement pstmtTableTag = connection.prepareStatement(findTagIDForAttraction);
-        ResultSet matchTagsToTagIDs = pstmtTableTag.executeQuery();
-
         List<Integer> tagIDList = new ArrayList<>();
-        while (matchTagsToTagIDs.next()) {
-            for (String tag : touristAttraction.getTags()) {
-                if (matchTagsToTagIDs.getString("tag").equalsIgnoreCase(tag)) {
-                    tagIDList.add(matchTagsToTagIDs.getInt("ID"));
+        if (touristAttraction.getTags().isEmpty()) {
+            return tagIDList;
+
+        } else {
+            String findTagIDForAttraction = "SELECT * FROM tag";
+            PreparedStatement pstmtTableTag = connection.prepareStatement(findTagIDForAttraction);
+            ResultSet matchTagsToTagIDs = pstmtTableTag.executeQuery();
+
+            List<String> tempTagList = touristAttraction.getTags();
+            String tempTag = "";
+            while (matchTagsToTagIDs.next()) {
+                for (String tag : touristAttraction.getTags()) {
+                    if (matchTagsToTagIDs.getString("tag").equalsIgnoreCase(tag)) {
+                        tagIDList.add(matchTagsToTagIDs.getInt("ID"));
+                        tempTag = tag;
+                    }
                 }
             }
+            return tagIDList;
         }
-        return tagIDList;
     }
 
     private PreparedStatement insertAttractionIntoDB(Connection connection, TouristAttraction touristAttraction, int cityID) throws SQLException {
@@ -358,16 +367,14 @@ public class TouristRepositoryJDBC {
         return affectedRows;
     }
 
-    private void updateAttractionTagRelation(Connection connection, int affectedRowsFromAttractionTagRelation, int attractionToUpdateID, List<Integer> tagIDList) throws SQLException {
-        if (affectedRowsFromAttractionTagRelation > 0) {
-            String updateAttractionTagRelation = "INSERT INTO tourist_attraction_tag (attractionID, tagID) VALUES (?, ?)";
-            PreparedStatement attractionTagRelationToUpdate = connection.prepareStatement(updateAttractionTagRelation);
+    private void updateAttractionTagRelation(Connection connection, int attractionToUpdateID, List<Integer> tagIDList) throws SQLException {
+        String updateAttractionTagRelation = "INSERT INTO tourist_attraction_tag (attractionID, tagID) VALUES (?, ?)";
+        PreparedStatement attractionTagRelationToUpdate = connection.prepareStatement(updateAttractionTagRelation);
 
-            for (int tagID : tagIDList) {
-                attractionTagRelationToUpdate.setInt(1, attractionToUpdateID);
-                attractionTagRelationToUpdate.setInt(2, tagID);
-                attractionTagRelationToUpdate.executeUpdate();
-            }
+        for (int tagID : tagIDList) {
+            attractionTagRelationToUpdate.setInt(1, attractionToUpdateID);
+            attractionTagRelationToUpdate.setInt(2, tagID);
+            attractionTagRelationToUpdate.executeUpdate();
         }
     }
 }
