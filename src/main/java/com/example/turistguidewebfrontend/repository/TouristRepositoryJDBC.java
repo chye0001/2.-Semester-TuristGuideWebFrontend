@@ -270,7 +270,9 @@ public class TouristRepositoryJDBC {
 
     private List<Integer> createTagIDListOnAttraction(Connection connection, TouristAttraction touristAttraction) throws SQLException {
         List<Integer> tagIDList = new ArrayList<>();
-        if (touristAttraction.getTags().isEmpty()) {
+        List<String> attractionTags = touristAttraction.getTags();
+
+        if (attractionTags.isEmpty()) {
             return tagIDList;
 
         } else {
@@ -278,11 +280,20 @@ public class TouristRepositoryJDBC {
             PreparedStatement pstmtTableTag = connection.prepareStatement(findTagIDForAttraction);
             ResultSet matchTagsToTagIDs = pstmtTableTag.executeQuery();
 
+            String tagToRemove = "";
             while (matchTagsToTagIDs.next()) {
-                for (String tag : touristAttraction.getTags()) {
+
+                for (String tag : attractionTags) {
                     if (matchTagsToTagIDs.getString("tag").equalsIgnoreCase(tag)) {
                         tagIDList.add(matchTagsToTagIDs.getInt("ID"));
+                        tagToRemove = tag;
+                        break;
                     }
+                }
+                attractionTags.remove(tagToRemove);
+                System.out.println(attractionTags);
+                if (attractionTags.isEmpty()){
+                    break;
                 }
             }
             return tagIDList;
