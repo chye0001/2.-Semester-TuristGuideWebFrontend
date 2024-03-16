@@ -278,13 +278,10 @@ public class TouristRepositoryJDBC {
             PreparedStatement pstmtTableTag = connection.prepareStatement(findTagIDForAttraction);
             ResultSet matchTagsToTagIDs = pstmtTableTag.executeQuery();
 
-            List<String> tempTagList = touristAttraction.getTags();
-            String tempTag = "";
             while (matchTagsToTagIDs.next()) {
                 for (String tag : touristAttraction.getTags()) {
                     if (matchTagsToTagIDs.getString("tag").equalsIgnoreCase(tag)) {
                         tagIDList.add(matchTagsToTagIDs.getInt("ID"));
-                        tempTag = tag;
                     }
                 }
             }
