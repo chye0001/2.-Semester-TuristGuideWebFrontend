@@ -65,4 +65,9 @@ jobs:
           app-name: 'TouristAttractions'
           slot-name: 'Production'
           package: '*.jar'
-          
+
+      - name: Build with Maven
+        env:
+          JDBC_DATABASE_URL: ${{secrects.JDBC_DATABSE_URL}}
+          JDBC_USERNAME: ${{secrets.JDBC_USERNAME}}
+          JDBC_PASSWORD: ${{secrets.JDBC_PASSWORD}}

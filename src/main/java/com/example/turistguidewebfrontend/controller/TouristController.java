@@ -24,15 +24,14 @@ public class TouristController {
 
     @GetMapping("")
     public String getAllTouristAttraction(Model model) {
-        List<TouristAttraction> allTouristAttractions = touristService.viewAll();
+        List<TouristAttraction> allTouristAttractions = touristService.getAllAttractions();
         model.addAttribute("attractions", allTouristAttractions);
-
         return "admin";
     }
 
     @GetMapping("/all")
     public String getAllTouristAttractionOnly(Model model) throws IOException {
-        List<TouristAttraction> allTouristAttractions = touristService.viewAll();
+        List<TouristAttraction> allTouristAttractions = touristService.getAllAttractions();
         model.addAttribute("attractions", allTouristAttractions);
 
 //        for (TouristAttraction attraction : allTouristAttractions) {
@@ -49,7 +48,7 @@ public class TouristController {
 
     @GetMapping("/currency-conversion")
     public String convertCurrencies(@RequestParam String currency, Model model) {
-        List<TouristAttraction> allTouristAttractions = touristService.viewAll();
+        List<TouristAttraction> allTouristAttractions = touristService.getAllAttractions();
         model.addAttribute("attractions", allTouristAttractions);
 
         List<String> currencyList = currencyService.getAllCurrencies();
@@ -69,7 +68,6 @@ public class TouristController {
 
         model.addAttribute("attraction", name);
         model.addAttribute("tags", turristAttractionTags);
-
         return "tags-user";
     }
 
@@ -92,7 +90,6 @@ public class TouristController {
 
         List<String> tagsSelections = touristService.getTagSelections();
         model.addAttribute("tags", tagsSelections);
-
         return "create-tourist-attraction";
     }
 
@@ -104,7 +101,7 @@ public class TouristController {
 
     @GetMapping("/{name}/update")
     public String buildUpdateForm(@PathVariable String name, Model model) {
-        TouristAttraction attractionToUpdate = touristService.read(name);
+        TouristAttraction attractionToUpdate = touristService.getAttractionOnName(name);
         model.addAttribute("touristAttractionToUpdate", attractionToUpdate);
 
         List<String> citySelections = touristService.getCitySelections();

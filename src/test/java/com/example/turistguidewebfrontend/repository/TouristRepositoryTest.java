@@ -25,7 +25,7 @@ class TouristRepositoryTest {
 
     @Test
     void search_For_Tourist_Attraction_On_Name() {
-        TouristAttraction expectedAttraction = new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99.95);
+        TouristAttraction expectedAttraction = new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99);
         TouristAttraction actualAttraction = repository.read("SMK");
         assertEquals(expectedAttraction, actualAttraction);
     }
@@ -40,10 +40,10 @@ class TouristRepositoryTest {
     @Test
     void get_All_Tourist_Attractions() {
         List<TouristAttraction> expectedAttractionsList = new ArrayList<>(List.of(
-                new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99.95),
-                new TouristAttraction("Odense Zoo", "Europas bedste zoo", "Odense", List.of("Børnevenlig"), 25.95),
-                new TouristAttraction("Dyrehaven", "Naturpark med skovområder", "Kongens Lyngby", List.of("Natur", "Gratis"), 0.00),
-                new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "København", List.of("Børnevenlig"), 249.95)));
+                new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99),
+                new TouristAttraction("Odense Zoo", "Europas bedste zoo", "Odense", List.of("Børnevenlig"), 25),
+                new TouristAttraction("Dyrehaven", "Naturpark med skovområder", "Kongens Lyngby", List.of("Natur", "Gratis"), 0),
+                new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "København", List.of("Børnevenlig"), 249)));
 
         List<TouristAttraction> actualAttractionsList = repository.viewAll();
 
@@ -63,10 +63,10 @@ class TouristRepositoryTest {
     @Test
     void create() {
         List<TouristAttraction> expectedAttractionsList = new ArrayList<>(List.of(
-                new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99.95),
-                new TouristAttraction("Odense Zoo", "Europas bedste zoo", "Odense", List.of("Børnevenlig"), 25.95),
-                new TouristAttraction("Dyrehaven", "Naturpark med skovområder", "Kongens Lyngby", List.of("Natur", "Gratis"), 0.00),
-                new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "København", List.of("Børnevenlig"), 249.95),
+                new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99),
+                new TouristAttraction("Odense Zoo", "Europas bedste zoo", "Odense", List.of("Børnevenlig"), 25),
+                new TouristAttraction("Dyrehaven", "Naturpark med skovområder", "Kongens Lyngby", List.of("Natur", "Gratis"), 0),
+                new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "København", List.of("Børnevenlig"), 249),
                 new TouristAttraction("Test", "Test", "Test", List.of("Test"), 0)));
 
         repository.create(new TouristAttraction("Test", "Test", "Test", List.of("Test"), 0));
@@ -78,9 +78,9 @@ class TouristRepositoryTest {
 
     @Test
     void update_Existing_Attraction() {
-        TouristAttraction expectedUpdatedAttraction = new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "LYNGBYTEST", List.of("Børnevenlig"), 249.95);
+        TouristAttraction expectedUpdatedAttraction = new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "LYNGBYTEST", List.of("Børnevenlig"), 249);
 
-        repository.update(new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "LYNGBYTEST", List.of("Børnevenlig"), 249.95));
+        repository.update(new TouristAttraction("Tivoli", "Forlystelsespark midt i København centrum", "LYNGBYTEST", List.of("Børnevenlig"), 249));
         TouristAttraction actualUpdatedAttraction = repository.read("Tivoli");
 
         assertEquals(expectedUpdatedAttraction, actualUpdatedAttraction);
@@ -91,7 +91,7 @@ class TouristRepositoryTest {
         TouristAttraction expectedUpdatedAttraction = null;
 
         TouristAttraction actualUpdatedAttraction = repository.update(
-                new TouristAttraction("ikkeEksisterendeAttraction", "Forlystelsespark midt i København centrum", "LYNGBYTEST", List.of("Børnevenlig"), 249.95));
+                new TouristAttraction("ikkeEksisterendeAttraction", "Forlystelsespark midt i København centrum", "LYNGBYTEST", List.of("Børnevenlig"), 249));
 
         assertEquals(expectedUpdatedAttraction, actualUpdatedAttraction);
     }

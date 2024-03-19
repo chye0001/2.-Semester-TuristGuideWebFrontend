@@ -27,7 +27,7 @@
     <input id="price" type="number" th:field="*{price}">
 
     <label for="currency">Valuta: </label>
-    <input id="currency" type="text" th:field="*{currency}" readonly>
+    <input id="currency" type="text" th:field="*{currencyCode}" readonly>
 
     <div id="tags">
         <input type="checkbox" th:field="*{tags}" th:each="tag : ${tags}" th:value="${tag}" th:text="${tag}">

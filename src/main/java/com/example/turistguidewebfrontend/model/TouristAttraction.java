@@ -9,23 +9,40 @@ public class TouristAttraction {
     private String description;
     private String city;
     private List<String> tags;
-    private double price;
-    private String currency;
+    private int price;
+    private String currencyCode;
 
     public TouristAttraction(){
-        this.currency="DKK";
+        this.currencyCode ="DKK";
     }
+
+    // gammel, blev andet med den hardkodet arraylist som database.
     public TouristAttraction(String name,
                              String description,
                              String city,
                              List<String> tags,
-                             double price){
+                             int price){
         this.name = name;
         this.description = description;
         this.city = city;
         this.tags = tags;
         this.price = price;
-        this.currency = "DKK";
+        this.currencyCode = "DKK";
+    }
+
+    //Ny bliver brugt i JDBCrepository.
+    public TouristAttraction(String name,
+                             String description,
+                             String city,
+                             List<String> tags,
+                             int price,
+                             String currencyCode){
+        this.name = name;
+        this.description = description;
+        this.city = city;
+        this.tags = tags;
+        this.price = price;
+        this.currencyCode = currencyCode;
     }
 
     public String getName() {
@@ -40,11 +57,11 @@ public class TouristAttraction {
     public List<String> getTags() {
         return tags;
     }
-    public double getPrice(){
+    public int getPrice(){
         return price;
     }
-    public String getCurrency() {
-        return currency;
+    public String getCurrencyCode() {
+        return currencyCode;
     }
 
     public void setName(String name) {
@@ -59,11 +76,23 @@ public class TouristAttraction {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
-    public void setPrice(double price){
+    public void setPrice(int price){
         this.price = price;
     }
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    @Override
+    public String toString() {
+        return "TouristAttraction{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", city='" + city + '\'' +
+                ", tags=" + tags +
+                ", price=" + price +
+                ", currencyCode='" + currencyCode + '\'' +
+                '}';
     }
 
     @Override
@@ -71,7 +100,7 @@ public class TouristAttraction {
         if (this == o) return true;
         if (!(o instanceof TouristAttraction that)) return false;
 //        if(name == null && that.getName() == null) return true;
-        return Double.compare(price, that.price) == 0 && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(city, that.city) && Objects.equals(tags, that.tags) && Objects.equals(currency, that.currency);
+        return Double.compare(price, that.price) == 0 && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(city, that.city) && Objects.equals(tags, that.tags) && Objects.equals(currencyCode, that.currencyCode);
     }
 }
 

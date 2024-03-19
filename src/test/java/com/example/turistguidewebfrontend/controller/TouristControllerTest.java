@@ -11,12 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -87,8 +84,8 @@ class TouristControllerTest {
 
     @Test
     void buildUpdateForm() throws Exception{
-        when(touristService.read("SMK"))
-                .thenReturn(new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99.95));
+        when(touristService.getAttractionOnName("SMK"))
+                .thenReturn(new TouristAttraction("SMK", "Statens Museum for Kunst", "København", List.of("Kunst", "Museum"), 99));
         mockMvc.perform(get("/attractions/SMK/update"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("update-tourist-attraction"));
