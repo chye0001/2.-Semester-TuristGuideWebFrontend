@@ -35,9 +35,6 @@ CREATE TABLE tourist_attraction_tag(
 
 
 
-------------------------------------------------------------------------------------------------------------------------
---INSERTION OF DATA / POPULATING DATABASE / SEEDING DATABASE
-
 -- City selections
 INSERT INTO city(name) VALUES('København_h2');
 INSERT INTO city(name) VALUES('Odense_h2');

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class TouristRepositoryJDBC {
+public class TouristRepositoryJDBC implements CRUDOperationsJDBC{
 
     @Value("${spring.datasource.url}")
     private String url;
