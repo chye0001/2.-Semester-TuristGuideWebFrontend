@@ -1,6 +1,7 @@
 package com.example.turistguidewebfrontend.repository;
 
 import com.example.turistguidewebfrontend.model.TouristAttraction;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -10,22 +11,22 @@ import java.util.List;
 @Repository
 public class TouristRepositoryJDBC {
 
-//    @Value("${spring.datasource.url}")
-//    private String url;
-//
-//    @Value("${spring.datasource.username}")
-//    private String username;
-//
-//    @Value("${spring.datasource.password}")
-//    private String password;
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
 
 //    private final String url = "jdbc:mysql://touristattractionserver.mysql.database.azure.com/tourist_guide";
 //    private final String username = "newuser1";
 //    private final String password = "password1_";
 
-    private final String url = "jdbc:mysql://localhost:3306/tourist_guide";
-    private final String username = "newuser1";
-    private final String password = "newuser1";
+//    private final String url = "jdbc:mysql://localhost:3306/tourist_guide";
+//    private final String username = "newuser1";
+//    private final String password = "newuser1";
 
     public List<TouristAttraction> getAllAttractions() {
         List<TouristAttraction> attractionList = new ArrayList<>();
@@ -38,7 +39,6 @@ public class TouristRepositoryJDBC {
                 TouristAttraction touristAttraction = recreateAttractionObjectFromDB(attractionsResultSet, tagResultset);
                 attractionList.add(touristAttraction);
             }
-            return attractionList;
 
         } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
