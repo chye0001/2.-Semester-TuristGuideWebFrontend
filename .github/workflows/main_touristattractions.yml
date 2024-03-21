@@ -67,6 +67,7 @@ jobs:
           package: '*.jar'
 
       - name: Build with Maven
+        run:
         env:
           JDBC_DATABASE_URL: ${{secrects.JDBC_DATABSE_URL}}
           JDBC_USERNAME: ${{secrets.JDBC_USERNAME}}

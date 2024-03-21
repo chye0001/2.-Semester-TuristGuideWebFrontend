@@ -84,15 +84,11 @@ public class TouristRepository {
     }
 
     public List<String> getAttractionTags(String name) {
-        List<String> tags = null;
-
         for (TouristAttraction attraction:database) {
             if (attraction.getName().equalsIgnoreCase(name)){
-                tags = attraction.getTags();
-                return tags;
+                return attraction.getTags();
             }
         }
-
-        return tags;
+        return null;
     }
 }
