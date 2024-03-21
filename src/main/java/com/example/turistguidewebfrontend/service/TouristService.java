@@ -33,7 +33,7 @@ public class TouristService {
     }
 
     public void create(TouristAttraction touristAttraction) {
-        repositoryJDBC.createAttraction(touristAttraction);
+        repositoryJDBC.addAttraction(touristAttraction);
     }
 
     public void update(TouristAttraction touristAttraction) {

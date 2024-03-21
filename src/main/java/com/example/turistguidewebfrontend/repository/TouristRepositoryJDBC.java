@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class TouristRepositoryJDBC implements CRUDOperationsJDBC{
+public class TouristRepositoryJDBC implements CRUDOperationsJDBC {
 
     @Value("${spring.datasource.url}")
     private String url;
@@ -67,17 +67,17 @@ public class TouristRepositoryJDBC implements CRUDOperationsJDBC{
         return requestedAttraction;
     }
 
-    public void createAttraction(TouristAttraction touristAttraction) {
+    public void addAttraction(TouristAttraction touristAttraction) {
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
 
             int cityID = matchCityNameToCityID(connection, touristAttraction);
-            List<Integer> tagIDList = createTagIDListOnAttraction(connection, touristAttraction);
+            PreparedStatement insertAttractionStatement = insertAttractionIntoDB(connection, touristAttraction, cityID);
+            int affectedRows = insertAttractionStatement.executeUpdate();
 
-            PreparedStatement pstmtAttractionToInsert = insertAttractionIntoDB(connection, touristAttraction, cityID);
-            int affectedRows = pstmtAttractionToInsert.executeUpdate();
-
-            createAttractionTagRelation(connection, affectedRows, pstmtAttractionToInsert, tagIDList);
-
+            if (affectedRows > 0) {
+                List<Integer> tagIDList = createTagIDListOnAttraction(connection, touristAttraction);
+                createAttractionTagRelation(connection, insertAttractionStatement, tagIDList);
+            }
         } catch (SQLException sqlException) {
             System.out.println("Noget gik galt");
             sqlException.printStackTrace();
@@ -95,7 +95,9 @@ public class TouristRepositoryJDBC implements CRUDOperationsJDBC{
 
             int cityID = matchCityNameToCityID(connection, touristAttraction);
             int affectedRowsFromUpdate = updateAttractionInDatabase(connection, touristAttraction, attractionToUpdateID, cityID);
-            resetAttractionTagRelation(connection, attractionToUpdateID, affectedRowsFromUpdate);
+            if (affectedRowsFromUpdate > 0) {
+                resetAttractionTagRelation(connection, attractionToUpdateID);
+            }
 
             List<Integer> tagIDList = createTagIDListOnAttraction(connection, touristAttraction);
             updateAttractionTagRelation(connection, attractionToUpdateID, tagIDList);
@@ -225,14 +227,13 @@ public class TouristRepositoryJDBC implements CRUDOperationsJDBC{
         //Instantiating tags list on attraction
         List<String> tags = createTagListOnAttraction(tagResultSet);
 
-        TouristAttraction touristAttraction = new TouristAttraction(
+        return new TouristAttraction(
                 attractionsResultSet.getString("name"),
                 attractionsResultSet.getString("description"),
                 attractionsResultSet.getString("city"),
                 tags,
                 attractionsResultSet.getInt("price"),
                 attractionsResultSet.getString("currencyCode"));
-        return touristAttraction;
     }
 
     private ResultSet executeGetAttractionOnNameQuery(Connection connection, String touristAttractionName) throws SQLException {
@@ -272,10 +273,7 @@ public class TouristRepositoryJDBC implements CRUDOperationsJDBC{
         List<Integer> tagIDList = new ArrayList<>();
         List<String> attractionTags = touristAttraction.getTags();
 
-        if (attractionTags.isEmpty()) {
-            return tagIDList;
-
-        } else {
+        if (!attractionTags.isEmpty()) {
             String findTagIDForAttraction = "SELECT * FROM tag";
             PreparedStatement pstmtTableTag = connection.prepareStatement(findTagIDForAttraction);
             ResultSet matchTagsToTagIDs = pstmtTableTag.executeQuery();
@@ -291,13 +289,12 @@ public class TouristRepositoryJDBC implements CRUDOperationsJDBC{
                     }
                 }
                 attractionTags.remove(tagToRemove);
-                System.out.println(attractionTags);
-                if (attractionTags.isEmpty()){
+                if (attractionTags.isEmpty()) {
                     break;
                 }
             }
-            return tagIDList;
         }
+        return tagIDList;
     }
 
     private PreparedStatement insertAttractionIntoDB(Connection connection, TouristAttraction touristAttraction, int cityID) throws SQLException {
@@ -311,21 +308,19 @@ public class TouristRepositoryJDBC implements CRUDOperationsJDBC{
         return pstmtAttractionToInsert;
     }
 
-    private void createAttractionTagRelation(Connection connection, int affectedRows, PreparedStatement pstmtAttractionToInsert, List<Integer> tagIDList) throws SQLException {
-        if (affectedRows > 0) {
-            try (ResultSet primaryKeyResultSet = pstmtAttractionToInsert.getGeneratedKeys()) {
-                if (primaryKeyResultSet.next()) {
-                    int createdAttractionID = primaryKeyResultSet.getInt(1);
+    private void createAttractionTagRelation(Connection connection, PreparedStatement insertAttractionStatement, List<Integer> tagIDList) throws SQLException {
+        try (ResultSet primaryKeyResultSet = insertAttractionStatement.getGeneratedKeys()) {
+            if (primaryKeyResultSet.next()) {
+                int createdAttractionID = primaryKeyResultSet.getInt(1);
 
-                    String buildAttractionTagRelation = "INSERT INTO tourist_attraction_tag (attractionID, tagID) VALUES (?, ?)";
-                    PreparedStatement pstmtAttractionTagrelation = connection.prepareStatement(buildAttractionTagRelation);
-                    for (int tagID : tagIDList) {
-                        pstmtAttractionTagrelation.setInt(1, createdAttractionID);
-                        pstmtAttractionTagrelation.setInt(2, tagID);
-                        pstmtAttractionTagrelation.executeUpdate();
-                    }
-
+                String buildAttractionTagRelation = "INSERT INTO tourist_attraction_tag (attractionID, tagID) VALUES (?, ?)";
+                PreparedStatement pstmtAttractionTagrelation = connection.prepareStatement(buildAttractionTagRelation);
+                for (int tagID : tagIDList) {
+                    pstmtAttractionTagrelation.setInt(1, createdAttractionID);
+                    pstmtAttractionTagrelation.setInt(2, tagID);
+                    pstmtAttractionTagrelation.executeUpdate();
                 }
+
             }
         }
     }
@@ -364,15 +359,11 @@ public class TouristRepositoryJDBC implements CRUDOperationsJDBC{
         return attractionToUpdate.executeUpdate();
     }
 
-    private int resetAttractionTagRelation(Connection connection, int attractionToUpdateID, int affectedRowsFromUpdate) throws SQLException {
-        int affectedRows = 0;
-        if (affectedRowsFromUpdate > 0) {
-            String resetAttractionTagRelation = "DELETE FROM tourist_attraction_tag WHERE attractionID = ?";
-            PreparedStatement attractionTagRelationToReset = connection.prepareStatement(resetAttractionTagRelation);
-            attractionTagRelationToReset.setInt(1, attractionToUpdateID);
-            affectedRows = attractionTagRelationToReset.executeUpdate();
-        }
-        return affectedRows;
+    private void resetAttractionTagRelation(Connection connection, int attractionToUpdateID) throws SQLException {
+        String resetAttractionTagRelation = "DELETE FROM tourist_attraction_tag WHERE attractionID = ?";
+        PreparedStatement attractionTagRelationToReset = connection.prepareStatement(resetAttractionTagRelation);
+        attractionTagRelationToReset.setInt(1, attractionToUpdateID);
+        attractionTagRelationToReset.executeUpdate();
     }
 
     private void updateAttractionTagRelation(Connection connection, int attractionToUpdateID, List<Integer> tagIDList) throws SQLException {
