@@ -2,7 +2,6 @@ package com.example.turistguidewebfrontend.service;
 
 import com.example.turistguidewebfrontend.model.TouristAttraction;
 import com.example.turistguidewebfrontend.repository.CRUDOperationsJDBC;
-import com.example.turistguidewebfrontend.repository.TouristRepositoryJDBC;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class TouristService {
 
     private final CRUDOperationsJDBC repositoryJDBC;
 
-    public TouristService(TouristRepositoryJDBC repositoryJDBC) {
+    public TouristService(CRUDOperationsJDBC repositoryJDBC) {
         this.repositoryJDBC = repositoryJDBC;
     }
 
