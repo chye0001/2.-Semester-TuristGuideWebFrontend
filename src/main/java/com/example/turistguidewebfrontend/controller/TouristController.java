@@ -14,15 +14,13 @@ import java.util.List;
 @RequestMapping("/attractions")
 public class TouristController {
 
-    private TouristService touristService;
-    private CurrencyService currencyService;
+    private final TouristService touristService;
+    private final CurrencyService currencyService;
 
     public TouristController(TouristService touristService, CurrencyService currencyService) {
         this.touristService = touristService;
         this.currencyService = currencyService;
     }
-
-    public TouristController(){}
 
     @GetMapping("")
     public String getAllTouristAttraction(Model model) {
