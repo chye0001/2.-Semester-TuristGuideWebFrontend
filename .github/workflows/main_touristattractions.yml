@@ -30,6 +30,7 @@ jobs:
           JDBC_DATABASE_URL: ${{secrets.JDBC_DATABASE_URL}}
           JDBC_USERNAME: ${{secrets.JDBC_USERNAME}}
           JDBC_PASSWORD: ${{secrets.JDBC_PASSWORD}}
+
       - name: Publish Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1
