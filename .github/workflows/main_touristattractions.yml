@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +30,9 @@ jobs:
           JDBC_DATABASE_URL: ${{secrets.JDBC_DATABASE_URL}}
           JDBC_USERNAME: ${{secrets.JDBC_USERNAME}}
           JDBC_PASSWORD: ${{secrets.JDBC_PASSWORD}}
+      - name: Publish Test Report
+        if: success() || failure()
+        uses: scacap/action-surefire-report@v1
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -52,82 +58,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-            client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_92AB690D343946AE962FA6586009597C }}
-            tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7C360DF4A25544DC8ACCDC2D8C32C800 }}
-            subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5C7D4E2879D740C9B6ABE0516CE1933E }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_92AB690D343946AE962FA6586009597C }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7C360DF4A25544DC8ACCDC2D8C32C800 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5C7D4E2879D740C9B6ABE0516CE1933E }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'springappdemo-dosei'
+          app-name: 'TouristAttractions'
           slot-name: 'Production'
           package: '*.jar'
-#
-#on:
-#  push:
-#    branches:
-#      - main
-#  workflow_dispatch:
-#
-#jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    permissions:
-#      checks: write
-#      contents: read
-#
-#    steps:
-#      - uses: actions/checkout@v4
-#
-#      - name: Set up Java version
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: '17'
-#
-#      - name: Build with Maven
-#        run: mvn clean install
-#        env:
-#          JDBC_DATABASE_URL: ${{secrets.JDBC_DATABASE_URL}}
-#          JDBC_USERNAME: ${{secrets.JDBC_USERNAME}}
-#          JDBC_PASSWORD: ${{secrets.JDBC_PASSWORD}}
-#
-#      - name: Publish Test Report
-#        if: success() || failure()
-#        uses: scacap/action-surefire-report@v1
-#
-#      - name: Upload artifact for deployment job
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: java-app
-#          path: '${{ github.workspace }}/target/*.jar'
-#
-#  deploy:
-#    runs-on: ubuntu-latest
-#    needs: build
-#    environment:
-#      name: 'Production'
-#      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-#    permissions:
-#      id-token: write #This is required for requesting the JWT
-#
-#    steps:
-#      - name: Download artifact from build job
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: java-app
-#
-#      - name: Login to Azure
-#        uses: azure/login@v1
-#        with:
-#          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_92AB690D343946AE962FA6586009597C }}
-#          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7C360DF4A25544DC8ACCDC2D8C32C800 }}
-#          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5C7D4E2879D740C9B6ABE0516CE1933E }}
-#
-#      - name: Deploy to Azure Web App
-#        id: deploy-to-webapp
-#        uses: azure/webapps-deploy@v2
-#        with:
-#          app-name: 'TouristAttractions'
-#          slot-name: 'Production'
-#          package: '*.jar'
