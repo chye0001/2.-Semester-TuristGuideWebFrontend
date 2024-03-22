@@ -20,14 +20,6 @@ public class TouristRepositoryJDBC implements CRUDOperationsJDBC {
     @Value("${spring.datasource.password}")
     private String password;
 
-//    private final String url = "jdbc:mysql://touristattractionserver.mysql.database.azure.com/tourist_guide";
-//    private final String username = "newuser1";
-//    private final String password = "password1_";
-
-//    private final String url = "jdbc:mysql://localhost:3306/tourist_guide";
-//    private final String username = "newuser1";
-//    private final String password = "newuser1";
-
     public List<TouristAttraction> getAllAttractions() {
         List<TouristAttraction> attractionList = new ArrayList<>();
 
