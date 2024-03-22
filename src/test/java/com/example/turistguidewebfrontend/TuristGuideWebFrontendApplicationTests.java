@@ -17,5 +17,5 @@ class TuristGuideWebFrontendApplicationTests {
     void contextLoads() { // denne tester om spring boot kan finde ud af instantierer objekterne, fra dependency injection. AKA, dependency injection bliver testet.
         assertThat(controller).isNotNull();
     }
-
+//
 }
